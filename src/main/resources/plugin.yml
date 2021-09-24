@@ -1,4 +1,4 @@
 name: Pudils
 version: ${project.version}
-main: me.simzahn.pudils.Pudils
+main: me.simzahn.pudils.Main
 api-version: 1.17
