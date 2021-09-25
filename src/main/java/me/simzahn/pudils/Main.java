@@ -1,6 +1,7 @@
 package me.simzahn.pudils;
 
 import com.zaxxer.hikari.HikariDataSource;
+import me.simzahn.pudils.commands.DifficultyCom;
 import me.simzahn.pudils.listeners.EntityRegenerateEvent;
 import me.simzahn.pudils.timer.Timer;
 import me.simzahn.pudils.timer.TimerCom;
@@ -37,6 +38,10 @@ public final class Main extends JavaPlugin {
 
         getCommand("timer").setExecutor(new TimerCom());
         getCommand("timer").setTabCompleter(new TimerCom());
+
+        getCommand("difficutly").setExecutor(new DifficultyCom());
+        getCommand("difficulty").setExecutor(new DifficultyCom());
+
 
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new EntityRegenerateEvent(), this);
