@@ -2,3 +2,6 @@ name: Pudils
 version: ${project.version}
 main: me.simzahn.pudils.Main
 api-version: 1.17
+commands:
+  timer:
+    description: To control the Timer!

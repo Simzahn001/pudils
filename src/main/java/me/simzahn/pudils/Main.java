@@ -1,10 +1,15 @@
 package me.simzahn.pudils;
 
 import com.zaxxer.hikari.HikariDataSource;
+import me.simzahn.pudils.timer.Timer;
+import me.simzahn.pudils.timer.TimerCom;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.sql.Time;
 
 public final class Main extends JavaPlugin {
 
+    private static Timer timer;
     private static Main plugin;
     private HikariDataSource hikari;
 
@@ -12,6 +17,7 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
         //Main Singleton
         plugin = this;
+        timer = new Timer();
 
         //HikariCP Setup
         hikari = new HikariDataSource();
@@ -22,6 +28,8 @@ public final class Main extends JavaPlugin {
         hikari.addDataSourceProperty("user", this.getConfig().get("db.user"));
         hikari.addDataSourceProperty("password", this.getConfig().get("db.password"));
 
+
+        getCommand("timer").setExecutor(new TimerCom());
     }
 
     @Override
@@ -39,5 +47,9 @@ public final class Main extends JavaPlugin {
 
     public HikariDataSource getHikari() {
         return hikari;
+    }
+
+    public static Timer getTimer() {
+        return timer;
     }
 }
