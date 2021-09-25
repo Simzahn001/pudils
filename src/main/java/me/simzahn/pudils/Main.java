@@ -30,6 +30,7 @@ public final class Main extends JavaPlugin {
 
 
         getCommand("timer").setExecutor(new TimerCom());
+        getCommand("timer").setTabCompleter(new TimerCom());
     }
 
     @Override
