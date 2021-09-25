@@ -4,4 +4,6 @@ main: me.simzahn.pudils.Main
 api-version: 1.17
 commands:
   timer:
-    description: To control the Timer!
+    description: To control the Timer! Use /timer help to gather more information!
+  difficulty:
+    description: To control the Difficuly!

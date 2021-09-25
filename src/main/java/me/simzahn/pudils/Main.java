@@ -1,8 +1,16 @@
 package me.simzahn.pudils;
 
 import com.zaxxer.hikari.HikariDataSource;
+import me.simzahn.pudils.commands.DifficultyCom;
+import me.simzahn.pudils.listeners.EntityRegenerateEvent;
+import me.simzahn.pudils.listeners.InventoryClickListener;
 import me.simzahn.pudils.timer.Timer;
 import me.simzahn.pudils.timer.TimerCom;
+import me.simzahn.pudils.util.Difficulty;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.Time;
@@ -31,6 +39,14 @@ public final class Main extends JavaPlugin {
 
         getCommand("timer").setExecutor(new TimerCom());
         getCommand("timer").setTabCompleter(new TimerCom());
+
+        getCommand("difficutly").setExecutor(new DifficultyCom());
+        getCommand("difficulty").setExecutor(new DifficultyCom());
+
+
+        PluginManager pluginManager = Bukkit.getPluginManager();
+        pluginManager.registerEvents(new EntityRegenerateEvent(), this);
+        pluginManager.registerEvents(new InventoryClickListener(), this);
     }
 
     @Override
@@ -53,4 +69,26 @@ public final class Main extends JavaPlugin {
     public static Timer getTimer() {
         return timer;
     }
+
+    public static Difficulty getDifficulty() {
+        return Difficulty.valueOf(plugin.getConfig().getString("difficulty"));
+    }
+
+    public static void setDifficulty(Difficulty difficulty) {
+        plugin.getConfig().set("difficulty", difficulty.name());
+        Main.getPlugin().saveConfig();
+        Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(ChatColor.GREEN + "Die Difficulty wurde auf " + difficulty.getName() + "§r" + ChatColor.GREEN + " gesetzt"));
+
+        if (difficulty == Difficulty.HALF_HEART) {
+            for (Player currentPlayer : Bukkit.getOnlinePlayers()) {
+                currentPlayer.setHealth(1);
+            }
+        } else {
+            for (Player currentPlayer : Bukkit.getOnlinePlayers()) {
+                currentPlayer.setHealth(20);
+            }
+        }
+
+    }
+
 }
