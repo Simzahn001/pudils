@@ -25,6 +25,7 @@ public class Timer {
         if(this.isRunning) {
             Bukkit.getOnlinePlayers().forEach( player -> player.sendMessage("§4§fDer Timer konnte nicht gestartet werden, weil er bereits läuft!"));
         }else {
+            isRunning = true;
             this.runnable = new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -60,6 +61,7 @@ public class Timer {
         stop();
         Main.getPlugin().getConfig().set("timer.seconds", 0);
         Main.getPlugin().saveConfig();
+        this.seconds=0;
     }
 
 
