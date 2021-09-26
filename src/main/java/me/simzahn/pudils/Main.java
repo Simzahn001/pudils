@@ -2,6 +2,7 @@ package me.simzahn.pudils;
 
 import com.zaxxer.hikari.HikariDataSource;
 import me.simzahn.pudils.commands.DifficultyCom;
+import me.simzahn.pudils.commands.TeamCom;
 import me.simzahn.pudils.listeners.EntityRegenerateEvent;
 import me.simzahn.pudils.listeners.InventoryClickListener;
 import me.simzahn.pudils.listeners.JoinEvent;
@@ -43,6 +44,9 @@ public final class Main extends JavaPlugin {
 
         getCommand("difficulty").setExecutor(new DifficultyCom());
         getCommand("difficulty").setTabCompleter(new DifficultyCom());
+
+        getCommand("team").setExecutor(new TeamCom());
+        getCommand("team").setTabCompleter(new TeamCom());
 
 
         PluginManager pluginManager = Bukkit.getPluginManager();

@@ -7,3 +7,5 @@ commands:
     description: To control the Timer! Use /timer help to gather more information!
   difficulty:
     description: To control the Difficuly!
+  team:
+    description: To manage the Team!
