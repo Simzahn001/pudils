@@ -3,9 +3,9 @@ package me.simzahn.pudils;
 import com.zaxxer.hikari.HikariDataSource;
 import me.simzahn.pudils.commands.DifficultyCom;
 import me.simzahn.pudils.commands.TeamCom;
-import me.simzahn.pudils.listeners.EntityRegenerateEvent;
+import me.simzahn.pudils.listeners.EntityRegenerateListener;
 import me.simzahn.pudils.listeners.InventoryClickListener;
-import me.simzahn.pudils.listeners.JoinEvent;
+import me.simzahn.pudils.listeners.JoinListener;
 import me.simzahn.pudils.timer.Timer;
 import me.simzahn.pudils.timer.TimerCom;
 import me.simzahn.pudils.util.Difficulty;
@@ -14,8 +14,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.sql.Time;
 
 public final class Main extends JavaPlugin {
 
@@ -50,9 +48,10 @@ public final class Main extends JavaPlugin {
 
 
         PluginManager pluginManager = Bukkit.getPluginManager();
-        pluginManager.registerEvents(new EntityRegenerateEvent(), this);
+        pluginManager.registerEvents(new EntityRegenerateListener(), this);
         pluginManager.registerEvents(new InventoryClickListener(), this);
-        pluginManager.registerEvents(new JoinEvent(), this);
+        pluginManager.registerEvents(new JoinListener(), this);
+        pluginManager.registerEvents(new DamageListener(), this);
     }
 
     @Override

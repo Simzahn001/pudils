@@ -13,7 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class JoinEvent implements Listener {
+public class JoinListener implements Listener {
 
     private String SELECT = "SELECT * FROM player WHERE uuid=?";
     private String INSERT = "INSERT INTO player(uuid, name, playing) VALUES(?,?,?)";
