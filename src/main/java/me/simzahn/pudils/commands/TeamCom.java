@@ -30,23 +30,49 @@ public class TeamCom implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (commandSender instanceof Player) {
             Player sender = (Player) commandSender;
-            Player victim;
 
-            //check if the Player exists
-            if (Bukkit.getPlayer(args[1])==null) {
-                sender.sendMessage(Component.text("§4Den Spieler " + args[1] + " gibt es nicht!"));
-                return false;
-            }
-            victim = Bukkit.getPlayer(args[1]);
+            if(args.length==1) {
+                if(args[0].equals("list") || args[0].equals("l")) {
 
-            //check if the Player wants to add himself xD
-            if (victim.equals(sender) && !sender.isOp()) {
-                sender.sendMessage(Component.text("§4Du kannst deinen Status nicht selber verändern!"));
-                return false;
-            }
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            try (Connection connection = Main.getPlugin().getHikari().getConnection();
+                                 PreparedStatement selectAll = connection.prepareStatement(SELECTall)) {
+
+                                //get all players, which are playing
+                                selectAll.setBoolean(1, true);
+                                ResultSet allResult = selectAll.executeQuery();
+                                sender.sendMessage(Component.text("§1------------------------------"));
+                                sender.sendMessage(Component.text("§6§fDiese Spieler sind im Team:"));
+                                while (allResult.next()) {
+                                    sender.sendMessage(Component.text("-§6" + allResult.getString("name")));
+                                }
+                                sender.sendMessage(Component.text("§1------------------------------"));
+
+                            } catch (SQLException exception) {
+                                exception.printStackTrace();
+                            }
+                        }
+                    }.runTaskAsynchronously(Main.getPlugin());
+                }
 
 
-            if(args.length==2) {
+            }else if(args.length==2) {
+
+
+                //check if the Player exists
+                if (Bukkit.getPlayer(args[1])==null) {
+                    sender.sendMessage(Component.text("§4Den Spieler " + args[1] + " gibt es nicht!"));
+                    return false;
+                }
+                Player victim = Bukkit.getPlayer(args[1]);
+
+                //check if the Player wants to add himself xD
+                if (victim.equals(sender) && !sender.isOp()) {
+                    sender.sendMessage(Component.text("§4Du kannst deinen Status nicht selber verändern!"));
+                    return false;
+                }
 
                 new BukkitRunnable() {
                     @Override
@@ -54,8 +80,7 @@ public class TeamCom implements CommandExecutor, TabCompleter {
                         try (Connection connection = Main.getPlugin().getHikari().getConnection();
                              PreparedStatement senderSelect = connection.prepareStatement(SELECT);
                              PreparedStatement playerSelect = connection.prepareStatement(SELECT);
-                             PreparedStatement update = connection.prepareStatement(UPDATE);
-                             PreparedStatement selectAll = connection.prepareStatement(SELECTall)) {
+                             PreparedStatement update = connection.prepareStatement(UPDATE)) {
 
 
                             //get the current state of the sender
@@ -100,8 +125,15 @@ public class TeamCom implements CommandExecutor, TabCompleter {
                                         update.execute();
                                         Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(Component.text("§aDer Spieler §1§f" + victim.getName() + " §awurde zum Team hinzugefügt!")));
                                         victim.sendTitle("§aDu bist im Team!", "§1§f" + sender.getName() + "§a hat dich hinzugefüt!", 10, 60, 10);
-                                        victim.teleport(sender.getLocation());
-                                        victim.setGameMode(GameMode.SURVIVAL);
+                                        //have to run #setGameMode sync <- cant be run async
+                                        new BukkitRunnable() {
+                                            @Override
+                                            public void run() {
+                                                victim.teleport(sender.getLocation());
+                                                victim.setGameMode(GameMode.SURVIVAL);
+                                            }
+                                        }.runTaskLater(Main.getPlugin(), 1);
+
 
                                         break;
 
@@ -123,23 +155,14 @@ public class TeamCom implements CommandExecutor, TabCompleter {
                                         update.execute();
                                         Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(Component.text("§aDer Spieler §1§f" + victim.getName() + " §a wurde vom Team entfernt!")));
                                         victim.sendTitle("§fDu wurdest rausgeschmissen!", "§1§f" + sender.getName() + "§a hat dich gekickt!", 10, 60, 10);
-                                        victim.setGameMode(GameMode.SPECTATOR);
+                                        //have to run #setGameMode sync <- cant be run async
+                                        new BukkitRunnable() {
+                                            @Override
+                                            public void run() {
+                                                victim.setGameMode(GameMode.SPECTATOR);
+                                            }
+                                        }.runTaskLater(Main.getPlugin(), 1);
 
-                                        break;
-
-                                    //to list all the Players in the team
-                                    case "list":
-                                    case "l":
-
-                                        //get all players, which are playing
-                                        selectAll.setBoolean(1, true);
-                                        ResultSet allResult = selectAll.executeQuery();
-                                        sender.sendMessage(Component.text("§1------------------------------"));
-                                        sender.sendMessage(Component.text("§6§fDiese Spieler sind im Team:"));
-                                        while (allResult.next()) {
-                                            sender.sendMessage(Component.text("-§6" + allResult.getString("name")));
-                                        }
-                                        sender.sendMessage(Component.text("§1------------------------------"));
 
                                         break;
                                     default:
@@ -160,7 +183,6 @@ public class TeamCom implements CommandExecutor, TabCompleter {
             }else {
                 sender.sendMessage("§4§fBitte benutze §1/team <action> <sender>§4§f!");
             }
-
 
         }
         return false;

@@ -32,31 +32,6 @@ public class Timer {
         if(this.isRunning) {
             Bukkit.getOnlinePlayers().forEach( player -> player.sendMessage("§4§fDer Timer konnte nicht gestartet werden, weil er bereits läuft!"));
         }else {
-            //check trough the team
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    try(Connection connection = Main.getPlugin().getHikari().getConnection();
-                        PreparedStatement select = connection.prepareStatement(SELECT)) {
-
-                        ResultSet result = select.executeQuery();
-
-                        while(result.next()) {
-                            if(Bukkit.getPlayer(result.getString("uuid")).isOnline()) {
-                                if (result.getBoolean("playing")) {
-                                    Bukkit.getPlayer(result.getString("uuid")).setGameMode(GameMode.SURVIVAL);
-                                }else {
-                                    Bukkit.getPlayer(result.getString("uuid")).setGameMode(GameMode.CREATIVE);
-                                }
-                            }
-                        }
-
-                    } catch (SQLException exception) {
-                        exception.printStackTrace();
-                    }
-                }
-            }.runTaskAsynchronously(Main.getPlugin());
-
             isRunning = true;
             this.runnable = new BukkitRunnable() {
                 @Override
