@@ -23,14 +23,18 @@ public class TimerCom implements CommandExecutor, TabCompleter {
                 switch (args[0]) {
                     case "start":
                         Main.getTimer().start();
+                        break;
                     case "stop":
                     case "s":
                         Main.getTimer().stop();
+                        break;
                     case "resume":
                     case "r":
                         Main.getTimer().resume();
+                        break;
                     case "reset":
                         Main.getTimer().reset();
+                        break;
                     case "help":
                     case "?":
                         player.sendMessage("§1-------------§6<§6§fTimer§6>§1-------------");
@@ -42,6 +46,9 @@ public class TimerCom implements CommandExecutor, TabCompleter {
                         player.sendMessage("§6- §1resume §6Lässt dem Timer weiterlaufen");
                         player.sendMessage("§6- §1reset §6Setzt den Timer auf 00:00:00 zurück, startet ihn jedoch nicht");
                         player.sendMessage("§1-------------------------------------------");
+                        break;
+                    default:
+                        break;
                 }
 
             }else {
