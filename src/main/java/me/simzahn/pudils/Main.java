@@ -3,6 +3,7 @@ package me.simzahn.pudils;
 import com.zaxxer.hikari.HikariDataSource;
 import me.simzahn.pudils.commands.DifficultyCom;
 import me.simzahn.pudils.commands.TeamCom;
+import me.simzahn.pudils.listeners.DamageListener;
 import me.simzahn.pudils.listeners.EntityRegenerateListener;
 import me.simzahn.pudils.listeners.InventoryClickListener;
 import me.simzahn.pudils.listeners.JoinListener;

@@ -1,5 +1,6 @@
-package me.simzahn.pudils;
+package me.simzahn.pudils.listeners;
 
+import me.simzahn.pudils.Main;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -18,8 +19,8 @@ import java.sql.SQLException;
 
 public class DamageListener implements Listener {
 
-    private String SELECTchallange = "SELECT name, id FROM challenge WHERE active=?";
 
+    private final String SELECTchallenge = "SELECT name, id FROM challenge WHERE active=?";
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
 
@@ -48,13 +49,13 @@ public class DamageListener implements Listener {
                         }
 
                         try(Connection connection = Main.getPlugin().getHikari().getConnection();
-                            PreparedStatement select = connection.prepareStatement(SELECTchallange)) {
+                            PreparedStatement select = connection.prepareStatement(SELECTchallenge)) {
 
                             select.setBoolean(1, true);
 
                             ResultSet result = select.executeQuery();
 
-                            //@TODO get the amout of times the Players already failed this challenge and display it
+                            //@TODO get the amount of times the Players already failed this challenge and display it
 
                             Bukkit.getOnlinePlayers().forEach(p -> {p.sendMessage(""); player.sendMessage("§6§fFolgende Challenges waren aktiv:");});
                             while (result.next()) {
@@ -91,12 +92,12 @@ public class DamageListener implements Listener {
 
 
                         try (Connection connection = Main.getPlugin().getHikari().getConnection();
-                            PreparedStatement insertAttempts = connection.prepareStatement("INSERT INTO attemps (time, nether, end) VALUES (?, ?, ?)");
+                            PreparedStatement insertAttempts = connection.prepareStatement("INSERT INTO attempt (time, nether, end) VALUES (?, ?, ?)");
                             PreparedStatement selectLastID = connection.prepareStatement("SELECT LAST_INSERT_ID() AS lastID");
                             PreparedStatement selectPlayers = connection.prepareStatement("SELECT ID FROM player WHERE playing=?");
-                            PreparedStatement insertAttemptsPlayer = connection.prepareStatement("INSERT INTO attempsPlayer VALUES (?, ?)");
+                            PreparedStatement insertAttemptsPlayer = connection.prepareStatement("INSERT INTO attemptPlayer VALUES (?, ?)");
                             PreparedStatement selectChallenge = connection.prepareStatement("SELECT ID FROM challenge WHERE active=?");
-                            PreparedStatement insertAttemptsChallenge = connection.prepareStatement("INSERT INTO attempsChallenge VALUES (?, ?)")) {
+                            PreparedStatement insertAttemptsChallenge = connection.prepareStatement("INSERT INTO attemptChallenge VALUES (?, ?)")) {
 
 
                             //Log the time
