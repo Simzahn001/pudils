@@ -3,6 +3,7 @@ package me.simzahn.pudils;
 import com.zaxxer.hikari.HikariDataSource;
 import me.simzahn.pudils.commands.DifficultyCom;
 import me.simzahn.pudils.commands.TeamCom;
+import me.simzahn.pudils.db.Updater;
 import me.simzahn.pudils.listeners.DamageListener;
 import me.simzahn.pudils.listeners.EntityRegenerateListener;
 import me.simzahn.pudils.listeners.InventoryClickListener;
@@ -15,6 +16,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.IOException;
+import java.sql.SQLException;
 
 public final class Main extends JavaPlugin {
 
@@ -36,6 +40,14 @@ public final class Main extends JavaPlugin {
         hikari.addDataSourceProperty("databaseName", this.getConfig().get("db.name"));
         hikari.addDataSourceProperty("user", this.getConfig().get("db.user"));
         hikari.addDataSourceProperty("password", this.getConfig().get("db.password"));
+
+        //SADU Updater
+        Updater saduUpdater = new Updater(hikari);
+        try {
+            saduUpdater.update();
+        } catch (IOException | SQLException e) {
+            e.printStackTrace();
+        }
 
 
         getCommand("timer").setExecutor(new TimerCom());
