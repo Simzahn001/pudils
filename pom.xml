@@ -43,6 +43,10 @@
                                     <pattern>com.zaxxer.hikari</pattern>
                                     <shadedPattern>me.simzahn.pudils.libs.com.zaxxer.hikari</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>de.chojo.sadu</pattern>
+                                    <shadedPattern>me.simzahn.pudils.libs.de.chojo.sadu</shadedPattern>
+                                </relocation>
                             </relocations>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
@@ -83,6 +87,10 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>sadu</id>
+            <url>https://eldonexus.de/repository/maven-public</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -97,6 +105,17 @@
             <artifactId>HikariCP</artifactId>
             <version>5.0.0</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.chojo.sadu</groupId>
+            <artifactId>sadu-updater</artifactId>
+            <version>1.2.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.chojo.sadu</groupId>
+            <artifactId>sadu-mariadb</artifactId>
+            <version>1.2.0</version>
         </dependency>
     </dependencies>
 </project>
