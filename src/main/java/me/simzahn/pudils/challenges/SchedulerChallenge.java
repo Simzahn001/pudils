@@ -1,9 +1,11 @@
 package me.simzahn.pudils.challenges;
 
-import org.bukkit.event.Listener;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public interface SchedulerChallenge extends Challenge{
 
-    public Listener getChallengeListener();
+    //how often !IN SECONDS! the task should be repeated
+    public float getPeriod();
+    public BukkitRunnable getRunnable();
 
 }

@@ -6,13 +6,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChallengeManager {
 
-    private List<Challenge> registeredChallenges;
+    private final List<Challenge> registeredChallenges;
 
-    public ChallengeManager() {}
+    public ChallengeManager() {
+        registeredChallenges = new ArrayList<>();
+    }
 
     //register a new challenge
     public void registerChallenge(Challenge challenge) {
@@ -21,7 +24,7 @@ public class ChallengeManager {
         //check if the challenge is already registered in the database
         final String SELECT = "SELECT ID FROM challenge WHERE name=?";
         try(Connection connection = Main.getPlugin().getHikari().getConnection();
-            PreparedStatement stmtSelect = connection.prepareStatement(SELECT);) {
+            PreparedStatement stmtSelect = connection.prepareStatement(SELECT)) {
 
             stmtSelect.setString(1, challenge.getName());
 
