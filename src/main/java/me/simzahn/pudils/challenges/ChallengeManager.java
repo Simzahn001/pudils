@@ -1,7 +1,15 @@
 package me.simzahn.pudils.challenges;
 
 import me.simzahn.pudils.Main;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import javax.annotation.Nullable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -49,6 +57,102 @@ public class ChallengeManager {
     //to register a new Challenge, use registerChallenge().
     public List<Challenge> getAllRegisteredChallenges() {
         return registeredChallenges;
+    }
+
+
+
+    //returns null, if no challenge with the name is found
+    //returns the challenge with the given name
+    public @Nullable Challenge getChallenge(String name) {
+        for (Challenge challenge : getAllRegisteredChallenges()) {
+            if (name.equals(challenge.getName())) {
+                return challenge;
+            }
+        }
+        return null;
+    }
+
+
+
+    //toggles if the challenges (only the active ones) are executed.
+    //Used for: Challenges are only executed if the timer is running.
+    public void toggleChallenges(boolean active) {
+
+        //get all active challenges from the db
+        try(Connection connection = Main.getPlugin().getHikari().getConnection();
+            PreparedStatement stmt = connection.prepareStatement("SELECT name FROM challenge WHERE active=?")) {
+
+            stmt.setBoolean(1, true);
+            ResultSet rs = stmt.executeQuery();
+
+
+            if (active) {
+                //start logic
+
+
+                while (rs.next()) {
+                    Challenge challenge = getChallenge(rs.getString("name"));
+                    if (challenge == null) {
+                        Bukkit.broadcast(Component.text("Challenge " + rs.getString("name") +
+                                " wurde nicht als registrierte Challenge gefunden!")
+                                .color(TextColor.color(255, 0, 0)).decorate(TextDecoration.BOLD));
+                        continue;
+                    }
+
+
+                    if (challenge instanceof ListenerChallenge) {
+
+                        //register the listener
+                        Listener listener = ((ListenerChallenge) challenge).getChallengeListener();
+                        Main.getPlugin().getPluginManager().registerEvents(listener, Main.getPlugin());
+
+                    } else if (challenge instanceof SchedulerChallenge) {
+
+                        //add the schedulers
+                        BukkitRunnable x = ((SchedulerChallenge) challenge).getRunnable();
+                        int period = Math.round(((SchedulerChallenge) challenge).getPeriod()/20);
+                        if (period != 0) {
+                            x.runTaskTimer(Main.getPlugin(), period, period);
+                        } else {
+                            //professional error handling xD
+                            Main.getPlugin().getLogger().info("Die Scheduler-Challenge \"" + challenge.getDisplayName() +
+                                    "\" konnte nicht registriert werden, weil die Periodendauer null ticks beträgt!");
+                        }
+                    }
+
+                }
+
+
+            }else {
+                //stop logic
+
+                while (rs.next()) {
+                    Challenge challenge = getChallenge(rs.getString("name"));
+                    if (challenge == null) {
+                        Bukkit.broadcast(Component.text("Challenge " + rs.getString("name") +
+                                " wurde nicht als registrierte Challenge gefunden!")
+                                .color(TextColor.color(255, 0, 0)).decorate(TextDecoration.BOLD));
+                        continue;
+                    }
+
+                    if (challenge instanceof ListenerChallenge) {
+                        ListenerChallenge listenerChallenge = (ListenerChallenge) challenge;
+
+                        HandlerList handlerList = new HandlerList();
+                        handlerList.unregister(listenerChallenge.getChallengeListener());
+
+                    } else if (challenge instanceof SchedulerChallenge) {
+                        ((SchedulerChallenge) challenge).getRunnable().cancel();
+                    }
+                }
+            }
+
+
+        } catch (SQLException e) {
+            Bukkit.broadcast(Component.text("Die aktiven Challenges konnten nicht abgefragt werden!")
+                    .color(TextColor.color(255, 0, 0)).decorate(TextDecoration.BOLD));
+            throw new RuntimeException(e);
+        }
     }
 
 
