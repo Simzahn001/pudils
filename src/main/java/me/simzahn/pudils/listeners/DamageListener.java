@@ -47,7 +47,8 @@ public class DamageListener implements Listener {
                             currentPlayer.sendMessage(Component.text("§1--------------------------------------"));
                             currentPlayer.sendMessage("");
                             currentPlayer.sendMessage(Component.text("§6§fIhr habt reingesuckt!"));
-                            currentPlayer.sendMessage(Component.text("§6§fDer Spieler §1§f" + player.getName() + " §6§f hat reingschissen!"));
+                            currentPlayer.sendMessage(Component.text("§6§fDer Spieler §1§f" + player.getName()
+                                    + " §6§f hat reingschissen!"));
                             currentPlayer.sendMessage(Component.text("§6§fDeath Cause: §1§f" + event.getCause()));
                         }
 
@@ -60,7 +61,8 @@ public class DamageListener implements Listener {
 
                             //@TODO get the amount of times the Players already failed this challenge and display it
 
-                            Bukkit.getOnlinePlayers().forEach(p -> {p.sendMessage(""); player.sendMessage("§6§fFolgende Challenges waren aktiv:");});
+                            Bukkit.getOnlinePlayers().forEach(p -> {p.sendMessage(""); player.sendMessage(
+                                    "§6§fFolgende Challenges waren aktiv:");});
                             while (result.next()) {
                                 for (Player currentPlayer : Bukkit.getOnlinePlayers()) {
                                     currentPlayer.sendMessage(" §1- §6§f" + result.getString("name"));

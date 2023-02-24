@@ -95,7 +95,8 @@ public class TeamCom implements CommandExecutor, TabCompleter {
 
                                 //check if the sender is playing himself
                                 if (!senderResult.getBoolean("playing") && !sender.isOp()) {
-                                    sender.sendMessage(Component.text("§4Du kannst niemanden einladen, wenn du selbst nicht dabei bist!"));
+                                    sender.sendMessage(Component.text("§4Du kannst niemanden einladen, "
+                                            + "wenn du selbst nicht dabei bist!"));
                                     return;
                                 }
 
@@ -105,7 +106,8 @@ public class TeamCom implements CommandExecutor, TabCompleter {
 
                                 //check if the victim exists in the database
                                 if(!victimResult.next()) {
-                                    sender.sendMessage(Component.text("§4Der Spieler " + victim.getName() + " konnte leider nicht in der Datenbank gefunden werden!"));
+                                    sender.sendMessage(Component.text("§4Der Spieler " + victim.getName()
+                                            + " konnte leider nicht in der Datenbank gefunden werden!"));
                                     return;
                                 }
 
@@ -127,7 +129,8 @@ public class TeamCom implements CommandExecutor, TabCompleter {
                                         update.setBoolean(1, true);
                                         update.setString(2, victim.getUniqueId().toString());
                                         update.execute();
-                                        Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(Component.text("§aDer Spieler §1§f" + victim.getName() + " §awurde zum Team hinzugefügt!")));
+                                        Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(Component.text("§aDer Spieler §1§f"
+                                                + victim.getName() + " §awurde zum Team hinzugefügt!")));
                                         victim.showTitle(Title.title(Component.text("Du bist im Team!")
                                                         .color(TextColor.color(33, 255, 0)),
                                                 Component.text(sender.getName())
@@ -162,7 +165,8 @@ public class TeamCom implements CommandExecutor, TabCompleter {
                                         update.setBoolean(1, false);
                                         update.setString(2, victim.getUniqueId().toString());
                                         update.execute();
-                                        Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(Component.text("§aDer Spieler §1§f" + victim.getName() + " §a wurde vom Team entfernt!")));
+                                        Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(Component.text("§aDer Spieler §1§f"
+                                                + victim.getName() + " §a wurde vom Team entfernt!")));
                                         victim.showTitle(Title.title(Component.text("Du wurdest rausgeschmissen!")
                                                         .color(TextColor.color(255, 0, 31)),
                                                 Component.text(sender.getName())
@@ -185,7 +189,8 @@ public class TeamCom implements CommandExecutor, TabCompleter {
                                 }
 
                             }else {
-                                sender.sendMessage(Component.text("§4Der Spieler" + args[1] + "konnte nicht in unseren Datenbanken gefunden werden!"));
+                                sender.sendMessage(Component.text("§4Der Spieler" + args[1]
+                                        + "konnte nicht in unseren Datenbanken gefunden werden!"));
                             }
 
                         } catch (SQLException exception) {

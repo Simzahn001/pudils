@@ -40,7 +40,9 @@ public class JoinListener implements Listener {
                         insert.setString(2, event.getPlayer().getName());
                         insert.setBoolean(3, false);
                         insert.execute();
-                        event.getPlayer().kick(Component.text("§4Du wirst gerade in unseren Datenbanken registriert! Versuche es in 10s erneut. Diese Nachricht sollte nur beim 1. Mal Joinen auftreten. Sollte dies nicht so sein, kontaktiere bitte @Simzahn"));
+                        event.getPlayer().kick(Component.text("§4Du wirst gerade in unseren Datenbanken registriert! "
+                                + "Versuche es in 10s erneut. Diese Nachricht sollte nur beim 1. Mal Joinen auftreten. "
+                                + "Sollte dies nicht so sein, kontaktiere bitte @Simzahn"));
                     }else {
                         if (!result.getBoolean("playing")) {
                             new BukkitRunnable() {
