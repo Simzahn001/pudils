@@ -2,6 +2,9 @@ package me.simzahn.pudils.listeners;
 
 import me.simzahn.pudils.Main;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
 import org.bukkit.GameMode;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,8 +18,8 @@ import java.sql.SQLException;
 
 public class JoinListener implements Listener {
 
-    private String SELECT = "SELECT * FROM player WHERE uuid=?";
-    private String INSERT = "INSERT INTO player(uuid, name, playing) VALUES(?,?,?)";
+    private final String SELECT = "SELECT * FROM player WHERE uuid=?";
+    private final String INSERT = "INSERT INTO player(uuid, name, playing) VALUES(?,?,?)";
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
@@ -46,7 +49,12 @@ public class JoinListener implements Listener {
                                     event.getPlayer().setGameMode(GameMode.SPECTATOR);
                                 }
                             }.runTaskLater(Main.getPlugin(), 1);
-                            event.getPlayer().sendTitle("Du bist §6§fZuschauer", "Frage einen Spielenden, ob du mitmachen darfst!", 10, 5*20, 10);
+                            event.getPlayer().showTitle(Title.title(Component.text("Du bist ")
+                                            .color(TextColor.color(255, 255, 255))
+                                        .append(Component.text("Zuschauer!")
+                                            .color(TextColor.color(255, 177, 68)).decorate(TextDecoration.BOLD)),
+                                    Component.text("Frage einen Spieler, ob du mitmachen darfst!")
+                                            .color(TextColor.color(255, 255, 255))));
                         }else {
                             new BukkitRunnable() {
                                 @Override

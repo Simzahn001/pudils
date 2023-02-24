@@ -2,6 +2,9 @@ package me.simzahn.pudils.commands;
 
 import me.simzahn.pudils.Main;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
@@ -22,9 +25,9 @@ import java.util.List;
 
 public class TeamCom implements CommandExecutor, TabCompleter {
 
-    private String SELECTall = "SELECT name FROM player WHERE playing=?";
-    private String SELECT = "SELECT * FROM player WHERE uuid=?";
-    private String UPDATE = "UPDATE player SET playing=? WHERE uuid=?";
+    private final String SELECTall = "SELECT name FROM player WHERE playing=?";
+    private final String SELECT = "SELECT * FROM player WHERE uuid=?";
+    private final String UPDATE = "UPDATE player SET playing=? WHERE uuid=?";
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -61,12 +64,13 @@ public class TeamCom implements CommandExecutor, TabCompleter {
             }else if(args.length==2) {
 
 
-                //check if the Player exists
-                if (Bukkit.getPlayer(args[1])==null) {
+                //check if Player exists
+                Player victim = Bukkit.getPlayer(args[1]);
+                if (victim == null) {
                     sender.sendMessage(Component.text("§4Den Spieler " + args[1] + " gibt es nicht!"));
                     return false;
                 }
-                Player victim = Bukkit.getPlayer(args[1]);
+
 
                 //check if the Player wants to add himself xD
                 if (victim.equals(sender) && !sender.isOp()) {
@@ -91,7 +95,7 @@ public class TeamCom implements CommandExecutor, TabCompleter {
 
                                 //check if the sender is playing himself
                                 if (!senderResult.getBoolean("playing") && !sender.isOp()) {
-                                    sender.sendMessage(Component.text("§4Du kannst niemanden einladen, wenn du selbst nich dabei bist!"));
+                                    sender.sendMessage(Component.text("§4Du kannst niemanden einladen, wenn du selbst nicht dabei bist!"));
                                     return;
                                 }
 
@@ -108,7 +112,7 @@ public class TeamCom implements CommandExecutor, TabCompleter {
 
 
                                 //now we get to the actual command ;^)
-                                //check trough the arguments
+                                //check through the arguments
                                 switch (args[0]) {
 
                                     //add the victim to the Team
@@ -124,7 +128,12 @@ public class TeamCom implements CommandExecutor, TabCompleter {
                                         update.setString(2, victim.getUniqueId().toString());
                                         update.execute();
                                         Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(Component.text("§aDer Spieler §1§f" + victim.getName() + " §awurde zum Team hinzugefügt!")));
-                                        victim.sendTitle("§aDu bist im Team!", "§1§f" + sender.getName() + "§a hat dich hinzugefüt!", 10, 60, 10);
+                                        victim.showTitle(Title.title(Component.text("Du bist im Team!")
+                                                        .color(TextColor.color(33, 255, 0)),
+                                                Component.text(sender.getName())
+                                                        .color(TextColor.color(0, 36, 254)).decorate(TextDecoration.BOLD)
+                                                        .append(Component.text(" hat dich hinzugefügt!")
+                                                                .color(TextColor.color(255, 255, 255)))));
                                         //have to run #setGameMode sync <- cant be run async
                                         new BukkitRunnable() {
                                             @Override
@@ -143,7 +152,7 @@ public class TeamCom implements CommandExecutor, TabCompleter {
                                     case "remove":
                                     case "r":
 
-                                        //check if the the victim isnt playing at all
+                                        //check if the victim isn't playing at all
                                         if (!victimResult.getBoolean("playing")) {
                                             sender.sendMessage("§4Der Spieler ist bereits nicht im Team!");
                                             return;
@@ -154,7 +163,12 @@ public class TeamCom implements CommandExecutor, TabCompleter {
                                         update.setString(2, victim.getUniqueId().toString());
                                         update.execute();
                                         Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(Component.text("§aDer Spieler §1§f" + victim.getName() + " §a wurde vom Team entfernt!")));
-                                        victim.sendTitle("§fDu wurdest rausgeschmissen!", "§1§f" + sender.getName() + "§a hat dich gekickt!", 10, 60, 10);
+                                        victim.showTitle(Title.title(Component.text("Du wurdest rausgeschmissen!")
+                                                        .color(TextColor.color(255, 0, 31)),
+                                                Component.text(sender.getName())
+                                                        .color(TextColor.color(0, 36, 254)).decorate(TextDecoration.BOLD)
+                                                        .append(Component.text(" hat dich gekickt!")
+                                                                .color(TextColor.color(255, 255, 255)))));
                                         //have to run #setGameMode sync <- cant be run async
                                         new BukkitRunnable() {
                                             @Override

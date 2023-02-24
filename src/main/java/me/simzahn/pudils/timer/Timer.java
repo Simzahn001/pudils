@@ -1,23 +1,18 @@
 package me.simzahn.pudils.timer;
 
 import me.simzahn.pudils.Main;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class Timer {
 
     private int seconds;
     private boolean isRunning = false;
     private BukkitTask runnable;
-    private String SELECT = "SELECT uuid,playing FROM player";
 
     public Timer() {
         this.seconds = Main.getPlugin().getConfig().getInt("timer.seconds");
@@ -41,9 +36,11 @@ public class Timer {
                         stop();
                     }
 
-                    for(Player currentPlayer : Bukkit.getOnlinePlayers()) {
-                        currentPlayer.sendActionBar("§6§l" + ((int)seconds/60/60<10?"0"+(int)seconds/60/60:(int)seconds/60/60) + ":" + (seconds/60%60<10?"0"+seconds/60%60:seconds/60%60) + ":" + (seconds%60<10?"0"+seconds%60:seconds%60));
-                    }
+                    Bukkit.getOnlinePlayers().forEach(p -> p.sendActionBar(Component.text(
+                            (seconds/60/60<10 ? "0"+seconds/60/60 : seconds /60/60) + ":"
+                                    + (seconds/60%60<10?"0"+seconds/60%60:seconds/60%60) + ":"
+                                    + (seconds%60<10?"0"+seconds%60:seconds%60))
+                                    .color(TextColor.color(255, 177, 68)).decorate(TextDecoration.BOLD)));
                     seconds++;
                 }
             }.runTaskTimer(Main.getPlugin(), 20, 20);
@@ -54,9 +51,8 @@ public class Timer {
         if(!this.isRunning) {
             Bukkit.getOnlinePlayers().forEach( player -> player.sendMessage("§4§fDer Timer konnte nicht gestoppt werden, weil er bereit gestoppt wurde!") );
         }else {
-            for (Player currentPlayer :  Bukkit.getOnlinePlayers()) {
-                currentPlayer.sendActionBar("§4§fDer Timer wurde gestoppt!");
-            }
+            Bukkit.getOnlinePlayers().forEach(p -> p.sendActionBar(Component.text("Der Timer wurde gestoppt!")
+                    .color(TextColor.color(256,0,0)).decorate(TextDecoration.BOLD)));
             Main.getPlugin().getConfig().set("timer.seconds", seconds);
             Main.getPlugin().saveConfig();
             this.isRunning = false;
