@@ -40,9 +40,12 @@ public class JoinListener implements Listener {
                         insert.setString(2, event.getPlayer().getName());
                         insert.setBoolean(3, false);
                         insert.execute();
-                        event.getPlayer().kick(Component.text("§4Du wirst gerade in unseren Datenbanken registriert! "
+                        event.getPlayer().kick(
+                                Component.text("Du wirst gerade in unseren Datenbanken registriert! "
                                 + "Versuche es in 10s erneut. Diese Nachricht sollte nur beim 1. Mal Joinen auftreten. "
-                                + "Sollte dies nicht so sein, kontaktiere bitte @Simzahn"));
+                                + "Sollte dies nicht so sein, kontaktiere bitte @Simzahn")
+                                        .color(TextColor.color(255, 0, 0))
+                        );
                     }else {
                         if (!result.getBoolean("playing")) {
                             new BukkitRunnable() {
@@ -51,12 +54,14 @@ public class JoinListener implements Listener {
                                     event.getPlayer().setGameMode(GameMode.SPECTATOR);
                                 }
                             }.runTaskLater(Main.getPlugin(), 1);
-                            event.getPlayer().showTitle(Title.title(Component.text("Du bist ")
+                            event.getPlayer().showTitle(Title.title(
+                                    Component.text("Du bist ")
                                             .color(TextColor.color(255, 255, 255))
                                         .append(Component.text("Zuschauer!")
                                             .color(TextColor.color(255, 177, 68)).decorate(TextDecoration.BOLD)),
                                     Component.text("Frage einen Spieler, ob du mitmachen darfst!")
-                                            .color(TextColor.color(255, 255, 255))));
+                                            .color(TextColor.color(255, 255, 255))
+                            ));
                         }else {
                             new BukkitRunnable() {
                                 @Override

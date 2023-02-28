@@ -1,6 +1,9 @@
 package me.simzahn.pudils.timer;
 
 import me.simzahn.pudils.Main;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -46,14 +49,60 @@ public class TimerCom implements CommandExecutor, TabCompleter {
                         player.sendMessage("§6- §1resume §6Lässt dem Timer weiterlaufen");
                         player.sendMessage("§6- §1reset §6Setzt den Timer auf 00:00:00 zurück, startet ihn jedoch nicht");
                         player.sendMessage("§1-------------------------------------------");
+
+                        player.sendMessage(
+                                Component.text("-------------")
+                                        .color(TextColor.color(0, 36, 254))
+                                    .append(Component.text("<")
+                                        .color(TextColor.color(255, 177, 68)))
+                                    .append(Component.text("Timer")
+                                        .color(TextColor.color(255, 177, 68))
+                                        .decorate(TextDecoration.BOLD))
+                                    .append(Component.text(">")
+                                        .color(TextColor.color(255, 177, 68)))
+                                    .append(Component.text("-------------")
+                                        .color(TextColor.color(0, 36, 254)))
+                        );
+                        player.sendMessage(
+                                Component.text("Mit diesem Command kannst du den Timer kontrollieren!")
+                                        .color(TextColor.color(255, 177, 68))
+                        );
+                        player.sendMessage(
+                                Component.text("/timer <action>")
+                                        .color(TextColor.color(0, 36, 254))
+                        );
+                        player.sendMessage(
+                                Component.text("Folgendes ist für den Parameter ")
+                                        .color(TextColor.color(255, 177, 68))
+                                        .decorate(TextDecoration.BOLD)
+                        );
                         break;
                     default:
                         break;
                 }
 
             }else {
-                player.sendMessage("§4§fBitte benutze §1/timer <action>§4§f!");
-                player.sendMessage("§4§fNutze §1/timer help §4§ffür weitere Infos!");
+                player.sendMessage(
+                        Component.text("Bitte benutze ")
+                                .color(TextColor.color(255, 0, 0))
+                                .decorate(TextDecoration.BOLD)
+                            .append(Component.text("/timer <action>")
+                                .color(TextColor.color(0, 36, 254)))
+                            .append(Component.text("!")
+                                .color(TextColor.color(255, 0, 0))
+                                .decorate(TextDecoration.BOLD))
+                );
+                player.sendMessage(
+                        Component.text("Nutze ")
+                                .color(TextColor.color(255, 0, 0))
+                                .decorate(TextDecoration.BOLD)
+                            .append(Component.text("/timer help")
+                                .color(TextColor.color(0, 36, 254))
+                                .decorate(TextDecoration.BOLD))
+                            .append(Component.text(" für weitere Infos!")
+                                .color(TextColor.color(255, 0, 0))
+                                .decorate(TextDecoration.BOLD))
+                );
             }
 
 
