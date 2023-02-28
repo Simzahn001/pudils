@@ -138,8 +138,8 @@ public class ChallengeManager {
                     if (challenge instanceof ListenerChallenge) {
                         ListenerChallenge listenerChallenge = (ListenerChallenge) challenge;
 
-                        HandlerList handlerList = new HandlerList();
-                        handlerList.unregister(listenerChallenge.getChallengeListener());
+                        HandlerList.unregisterAll(listenerChallenge.getChallengeListener());
+
 
                     } else if (challenge instanceof SchedulerChallenge) {
                         ((SchedulerChallenge) challenge).getRunnable().cancel();
@@ -155,6 +155,4 @@ public class ChallengeManager {
         }
     }
 
-
-    //@TODO register/unregister the listener/scheduler on start/stop of the Timer in Timer.java
 }
