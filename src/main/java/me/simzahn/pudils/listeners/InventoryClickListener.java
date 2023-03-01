@@ -19,33 +19,68 @@ public class InventoryClickListener implements Listener {
             if(event.getSlot() == 20) {
                 Main.setDifficulty(Difficulty.IMMORTABLE);
                 for(int i = 20; i <= 24; i++) {
-                    event.getInventory().setItem(i, new ItemBuilder(Material.RED_STAINED_GLASS_PANE).setDisplayname("§4Not Selected").setLore("","§8Click to select", "").save());
+                    event.getInventory().setItem(i, new ItemBuilder(Material.RED_STAINED_GLASS_PANE)
+                            .setDisplayname("§4Not Selected")
+                            .setLore("","§8Click to select", "")
+                            .save());
                 }
-                event.getInventory().setItem(20, new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).setDisplayname("§a§lSelected").setLore("", "§8Diese Schwierigkeit ist jetzt ausgewählt", "§8Clicke auf das rote Feld einer anderen Schwierigkein um diese auszuwählen").save());
+                event.getInventory().setItem(20, new ItemBuilder(Material.LIME_STAINED_GLASS_PANE)
+                        .setDisplayname("§a§lSelected")
+                        .setLore("", "§8Diese Schwierigkeit ist jetzt ausgewählt",
+                                "§8Klicke auf das rote Feld einer anderen Schwierigkeit um diese auszuwählen")
+                        .save());
             }else if(event.getSlot() == 21) {
                 Main.setDifficulty(Difficulty.NORMAl);
                 for(int i = 20; i <= 24; i++) {
-                    event.getInventory().setItem(i, new ItemBuilder(Material.RED_STAINED_GLASS_PANE).setDisplayname("§4Not Selected").setLore("","§8Click to select", "").save());
+                    event.getInventory().setItem(i, new ItemBuilder(Material.RED_STAINED_GLASS_PANE)
+                            .setDisplayname("§4Not Selected")
+                            .setLore("","§8Click to select", "")
+                            .save());
                 }
-                event.getInventory().setItem(21, new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).setDisplayname("§a§lSelected").setLore("", "§8Diese Schwierigkeit ist jetzt ausgewählt", "§8Clicke auf das rote Feld einer anderen Schwierigkein um diese auszuwählen").save());
+                event.getInventory().setItem(21, new ItemBuilder(Material.LIME_STAINED_GLASS_PANE)
+                        .setDisplayname("§a§lSelected")
+                        .setLore("", "§8Diese Schwierigkeit ist jetzt ausgewählt",
+                                "§8Klicke auf das rote Feld einer anderen Schwierigkeit um diese auszuwählen")
+                        .save());
             }else if(event.getSlot() == 22) {
                 Main.setDifficulty(Difficulty.UHC);
                 for(int i = 20; i <= 24; i++) {
-                    event.getInventory().setItem(i, new ItemBuilder(Material.RED_STAINED_GLASS_PANE).setDisplayname("§4Not Selected").setLore("","§8Click to select", "").save());
+                    event.getInventory().setItem(i, new ItemBuilder(Material.RED_STAINED_GLASS_PANE)
+                            .setDisplayname("§4Not Selected")
+                            .setLore("","§8Click to select", "")
+                            .save());
                 }
-                event.getInventory().setItem(22, new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).setDisplayname("§a§lSelected").setLore("", "§8Diese Schwierigkeit ist jetzt ausgewählt", "§8Clicke auf das rote Feld einer anderen Schwierigkein um diese auszuwählen").save());
+                event.getInventory().setItem(22, new ItemBuilder(Material.LIME_STAINED_GLASS_PANE)
+                        .setDisplayname("§a§lSelected")
+                        .setLore("", "§8Diese Schwierigkeit ist jetzt ausgewählt",
+                                "§8Klicke auf das rote Feld einer anderen Schwierig kein um diese auszuwählen")
+                        .save());
             }else if(event.getSlot() == 23) {
                 Main.setDifficulty(Difficulty.UUHC);
                 for(int i = 20; i <= 24; i++) {
-                    event.getInventory().setItem(i, new ItemBuilder(Material.RED_STAINED_GLASS_PANE).setDisplayname("§4Not Selected").setLore("","§8Click to select", "").save());
+                    event.getInventory().setItem(i, new ItemBuilder(Material.RED_STAINED_GLASS_PANE)
+                            .setDisplayname("§4Not Selected")
+                            .setLore("","§8Click to select", "")
+                            .save());
                 }
-                event.getInventory().setItem(23, new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).setDisplayname("§a§lSelected").setLore("", "§8Diese Schwierigkeit ist jetzt ausgewählt", "§8Clicke auf das rote Feld einer anderen Schwierigkein um diese auszuwählen").save());
+                event.getInventory().setItem(23, new ItemBuilder(Material.LIME_STAINED_GLASS_PANE)
+                        .setDisplayname("§a§lSelected")
+                        .setLore("", "§8Diese Schwierigkeit ist jetzt ausgewählt",
+                                "§8Klicke auf das rote Feld einer anderen Schwierigkeit um diese auszuwählen")
+                        .save());
             }else if(event.getSlot() == 24) {
                 Main.setDifficulty(Difficulty.HALF_HEART);
                 for(int i = 20; i <= 24; i++) {
-                    event.getInventory().setItem(i, new ItemBuilder(Material.RED_STAINED_GLASS_PANE).setDisplayname("§4Not Selected").setLore("","§8Click to select", "").save());
+                    event.getInventory().setItem(i, new ItemBuilder(Material.RED_STAINED_GLASS_PANE)
+                            .setDisplayname("§4Not Selected")
+                            .setLore("","§8Click to select", "")
+                            .save());
                 }
-                event.getInventory().setItem(24, new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).setDisplayname("§a§lSelected").setLore("", "§8Diese Schwierigkeit ist jetzt ausgewählt", "§8Clicke auf das rote Feld einer anderen Schwierigkein um diese auszuwählen").save());
+                event.getInventory().setItem(24, new ItemBuilder(Material.LIME_STAINED_GLASS_PANE)
+                        .setDisplayname("§a§lSelected")
+                        .setLore("", "§8Diese Schwierigkeit ist jetzt ausgewählt",
+                                "§8Klicke auf das rote Feld einer anderen Schwierigkeit um diese auszuwählen")
+                        .save());
             }
 
         }

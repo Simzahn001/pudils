@@ -2,6 +2,9 @@ package me.simzahn.pudils.commands;
 
 import me.simzahn.pudils.Main;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
@@ -22,9 +25,9 @@ import java.util.List;
 
 public class TeamCom implements CommandExecutor, TabCompleter {
 
-    private String SELECTall = "SELECT name FROM player WHERE playing=?";
-    private String SELECT = "SELECT * FROM player WHERE uuid=?";
-    private String UPDATE = "UPDATE player SET playing=? WHERE uuid=?";
+    private final String SELECTall = "SELECT name FROM player WHERE playing=?";
+    private final String SELECT = "SELECT * FROM player WHERE uuid=?";
+    private final String UPDATE = "UPDATE player SET playing=? WHERE uuid=?";
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -43,12 +46,27 @@ public class TeamCom implements CommandExecutor, TabCompleter {
                                 //get all players, which are playing
                                 selectAll.setBoolean(1, true);
                                 ResultSet allResult = selectAll.executeQuery();
-                                sender.sendMessage(Component.text("§1------------------------------"));
-                                sender.sendMessage(Component.text("§6§fDiese Spieler sind im Team:"));
+                                sender.sendMessage(
+                                        Component.text("------------------------------")
+                                                .color(TextColor.color(0, 36, 254))
+                                );
+                                sender.sendMessage(
+                                        Component.text("Diese Spieler sind im Team:")
+                                                .color(TextColor.color(255, 177, 68))
+                                                .decorate(TextDecoration.BOLD)
+                                );
                                 while (allResult.next()) {
-                                    sender.sendMessage(Component.text("-§6" + allResult.getString("name")));
+                                    sender.sendMessage(
+                                            Component.text("-")
+                                                    .color(TextColor.color(255,255,255))
+                                                .append(Component.text(allResult.getString("name"))
+                                                    .color(TextColor.color(255, 177, 68)))
+                                    );
                                 }
-                                sender.sendMessage(Component.text("§1------------------------------"));
+                                sender.sendMessage(
+                                        Component.text("------------------------------")
+                                                .color(TextColor.color(0, 36, 254))
+                                );
 
                             } catch (SQLException exception) {
                                 exception.printStackTrace();
@@ -61,16 +79,23 @@ public class TeamCom implements CommandExecutor, TabCompleter {
             }else if(args.length==2) {
 
 
-                //check if the Player exists
-                if (Bukkit.getPlayer(args[1])==null) {
-                    sender.sendMessage(Component.text("§4Den Spieler " + args[1] + " gibt es nicht!"));
+                //check if Player exists
+                Player victim = Bukkit.getPlayer(args[1]);
+                if (victim == null) {
+                    sender.sendMessage(
+                            Component.text("Den Spieler " + args[1] + "gibt es nicht!")
+                                    .color(TextColor.color(255, 0, 0))
+                    );
                     return false;
                 }
-                Player victim = Bukkit.getPlayer(args[1]);
+
 
                 //check if the Player wants to add himself xD
                 if (victim.equals(sender) && !sender.isOp()) {
-                    sender.sendMessage(Component.text("§4Du kannst deinen Status nicht selber verändern!"));
+                    sender.sendMessage(
+                            Component.text("Du kannst deinen Status nicht selber verändern!")
+                                    .color(TextColor.color(255, 0, 0))
+                    );
                     return false;
                 }
 
@@ -91,7 +116,10 @@ public class TeamCom implements CommandExecutor, TabCompleter {
 
                                 //check if the sender is playing himself
                                 if (!senderResult.getBoolean("playing") && !sender.isOp()) {
-                                    sender.sendMessage(Component.text("§4Du kannst niemanden einladen, wenn du selbst nich dabei bist!"));
+                                    sender.sendMessage(
+                                            Component.text("Du kannst niemanden einladen, wenn du selbst nicht dabei bist!")
+                                                    .color(TextColor.color(255, 0, 0))
+                                    );
                                     return;
                                 }
 
@@ -101,14 +129,18 @@ public class TeamCom implements CommandExecutor, TabCompleter {
 
                                 //check if the victim exists in the database
                                 if(!victimResult.next()) {
-                                    sender.sendMessage(Component.text("§4Der Spieler " + victim.getName() + " konnte leider nicht in der Datenbank gefunden werden!"));
+                                    sender.sendMessage(
+                                            Component.text("Der Spieler " + victim.getName() +
+                                                    " konnte leider nicht in unserer Datenbank gefunden werden!")
+                                                    .color(TextColor.color(255, 0, 0))
+                                    );
                                     return;
                                 }
 
 
 
                                 //now we get to the actual command ;^)
-                                //check trough the arguments
+                                //check through the arguments
                                 switch (args[0]) {
 
                                     //add the victim to the Team
@@ -116,15 +148,36 @@ public class TeamCom implements CommandExecutor, TabCompleter {
                                     case "a":
                                         //check if the victim is already playing
                                         if (victimResult.getBoolean("playing")) {
-                                            sender.sendMessage("§4Der Spieler ist bereits im Team!");
+                                            sender.sendMessage(
+                                                    Component.text("Der Spieler ist bereits im Team!")
+                                                            .color(TextColor.color(255, 0, 0))
+                                            );
                                             return;
                                         }
                                         //add him to the team
                                         update.setBoolean(1, true);
                                         update.setString(2, victim.getUniqueId().toString());
                                         update.execute();
-                                        Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(Component.text("§aDer Spieler §1§f" + victim.getName() + " §awurde zum Team hinzugefügt!")));
-                                        victim.sendTitle("§aDu bist im Team!", "§1§f" + sender.getName() + "§a hat dich hinzugefüt!", 10, 60, 10);
+                                        Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(
+                                                Component.text("Der Spieler ")
+                                                        .color(TextColor.color(33, 255, 0))
+                                                    .append(Component.text(victim.getName())
+                                                        .color(TextColor.color(0, 36, 254))
+                                                        .decorate(TextDecoration.BOLD))
+                                                    .append(Component.text(" wurde zu Team hinzugefügt!")
+                                                        .color(TextColor.color(33, 255, 0)))
+                                        ));
+                                        victim.showTitle(
+                                            Title.title(
+                                                Component.text("Du bist im Team!")
+                                                        .color(TextColor.color(33, 255, 0)),
+                                                Component.text(sender.getName())
+                                                        .color(TextColor.color(0, 36, 254))
+                                                        .decorate(TextDecoration.BOLD)
+                                                    .append(Component.text(" hat dich hinzugefügt!")
+                                                        .color(TextColor.color(255, 255, 255)))
+                                            )
+                                        );
                                         //have to run #setGameMode sync <- cant be run async
                                         new BukkitRunnable() {
                                             @Override
@@ -143,9 +196,12 @@ public class TeamCom implements CommandExecutor, TabCompleter {
                                     case "remove":
                                     case "r":
 
-                                        //check if the the victim isnt playing at all
+                                        //check if the victim isn't playing at all
                                         if (!victimResult.getBoolean("playing")) {
-                                            sender.sendMessage("§4Der Spieler ist bereits nicht im Team!");
+                                            sender.sendMessage(
+                                                    Component.text("Der Spieler ist bereits nicht im Team!")
+                                                            .color(TextColor.color(255, 0, 0))
+                                            );
                                             return;
                                         }
 
@@ -153,8 +209,26 @@ public class TeamCom implements CommandExecutor, TabCompleter {
                                         update.setBoolean(1, false);
                                         update.setString(2, victim.getUniqueId().toString());
                                         update.execute();
-                                        Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(Component.text("§aDer Spieler §1§f" + victim.getName() + " §a wurde vom Team entfernt!")));
-                                        victim.sendTitle("§fDu wurdest rausgeschmissen!", "§1§f" + sender.getName() + "§a hat dich gekickt!", 10, 60, 10);
+                                        Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(
+                                                Component.text("Der Spieler ")
+                                                        .color(TextColor.color(33, 255, 0))
+                                                    .append(Component.text(victim.getName())
+                                                        .color(TextColor.color(0, 36, 254))
+                                                        .decorate(TextDecoration.BOLD))
+                                                    .append(Component.text(" wurde vom Team entfernt!")
+                                                        .color(TextColor.color(33, 255, 0)))
+                                        ));
+                                        victim.showTitle(
+                                                Title.title(
+                                                        Component.text("Du wurdest rausgeschmissen!")
+                                                                .color(TextColor.color(255, 0, 31)),
+                                                        Component.text(sender.getName())
+                                                                .color(TextColor.color(0, 36, 254))
+                                                                .decorate(TextDecoration.BOLD)
+                                                            .append(Component.text(" hat dich gekickt!")
+                                                                .color(TextColor.color(255, 255, 255)))
+                                                )
+                                        );
                                         //have to run #setGameMode sync <- cant be run async
                                         new BukkitRunnable() {
                                             @Override
@@ -171,7 +245,11 @@ public class TeamCom implements CommandExecutor, TabCompleter {
                                 }
 
                             }else {
-                                sender.sendMessage(Component.text("§4Der Spieler" + args[1] + "konnte nicht in unseren Datenbanken gefunden werden!"));
+                                sender.sendMessage(
+                                        Component.text("Der Spieler " + args[1] +
+                                                "konnte nicht gefunden werden!")
+                                                .color(TextColor.color(0, 36, 254))
+                                );
                             }
 
                         } catch (SQLException exception) {
@@ -181,7 +259,16 @@ public class TeamCom implements CommandExecutor, TabCompleter {
                 }.runTaskAsynchronously(Main.getPlugin());
 
             }else {
-                sender.sendMessage("§4§fBitte benutze §1/team <action> <sender>§4§f!");
+                sender.sendMessage(
+                        Component.text("Bitte benutze ")
+                                .color(TextColor.color(255, 0, 0))
+                                .decorate(TextDecoration.BOLD)
+                            .append(Component.text("/team <action> <player>")
+                                .color(TextColor.color(0, 36, 254)))
+                            .append(Component.text(" !")
+                                .color(TextColor.color(255, 0, 0))
+                                .decorate(TextDecoration.BOLD))
+                );
             }
 
         }

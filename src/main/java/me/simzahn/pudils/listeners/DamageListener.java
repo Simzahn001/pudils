@@ -2,6 +2,9 @@ package me.simzahn.pudils.listeners;
 
 import me.simzahn.pudils.Main;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
@@ -10,7 +13,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.checkerframework.checker.signature.qual.IdentifierOrPrimitiveType;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,7 +22,7 @@ import java.sql.SQLException;
 public class DamageListener implements Listener {
 
 
-    private final String SELECTchallenge = "SELECT name, id FROM challenge WHERE active=?";
+    private final String SELECTChallenge = "SELECT name, id FROM challenge WHERE active=?";
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
 
@@ -38,18 +40,45 @@ public class DamageListener implements Listener {
                     @Override
                     public void run() {
 
-                        //send messages to the Players
-                        for (Player currentPlayer : Bukkit.getOnlinePlayers()) {
-                            currentPlayer.sendTitle("§4Ihr habt reingesuckt!", "");
-                            currentPlayer.sendMessage(Component.text("§1--------------------------------------"));
-                            currentPlayer.sendMessage("");
-                            currentPlayer.sendMessage(Component.text("§6§fIhr habt reingesuckt!"));
-                            currentPlayer.sendMessage(Component.text("§6§fDer Spieler §1§f" + player.getName() + " §6§f hat reingschissen!"));
-                            currentPlayer.sendMessage(Component.text("§6§fDeath Cause: §1§f" + event.getCause().toString()));
-                        }
+                        Bukkit.getOnlinePlayers().forEach(player -> {
+                            player.showTitle(Title.title(
+                                    Component.text("Ihr habt reingesuckt!")
+                                            .color(TextColor.color(255, 0, 0)),
+                                    Component.empty()
+                            ));
+                            player.sendMessage(
+                                    Component.text("--------------------------------------")
+                                            .color(TextColor.color(0, 36, 254))
+                            );
+                            player.sendMessage("");
+                            player.sendMessage(
+                                    Component.text("Ihr habt reingesuckt!")
+                                            .color(TextColor.color(255, 177, 68))
+                                            .decorate(TextDecoration.BOLD)
+                            );
+                            player.sendMessage(
+                                    Component.text("Der Spieler ")
+                                            .color(TextColor.color(255, 177, 68))
+                                            .decorate(TextDecoration.BOLD)
+                                        .append(Component.text(player.getName())
+                                            .color(TextColor.color(0, 36, 254))
+                                            .decorate(TextDecoration.BOLD))
+                                        .append(Component.text(" hat reingeshissen!")
+                                            .color(TextColor.color(255, 177, 68))
+                                            .decorate(TextDecoration.BOLD))
+                            );
+                            player.sendMessage(
+                                    Component.text("Death Cause: ")
+                                            .color(TextColor.color(255, 177, 68))
+                                            .decorate(TextDecoration.BOLD)
+                                        .append(Component.text(event.getCause().toString())
+                                            .color(TextColor.color(0, 36, 254))
+                                            .decorate(TextDecoration.BOLD))
+                            );
+                        });
 
                         try(Connection connection = Main.getPlugin().getHikari().getConnection();
-                            PreparedStatement select = connection.prepareStatement(SELECTchallenge)) {
+                            PreparedStatement select = connection.prepareStatement(SELECTChallenge)) {
 
                             select.setBoolean(1, true);
 
@@ -57,25 +86,39 @@ public class DamageListener implements Listener {
 
                             //@TODO get the amount of times the Players already failed this challenge and display it
 
-                            Bukkit.getOnlinePlayers().forEach(p -> {p.sendMessage(""); player.sendMessage("§6§fFolgende Challenges waren aktiv:");});
-                            while (result.next()) {
-                                for (Player currentPlayer : Bukkit.getOnlinePlayers()) {
-                                    currentPlayer.sendMessage(" §1- §6§f" + result.getString("name"));
+                            for (Player player : Bukkit.getOnlinePlayers()) {
+                                player.sendMessage("");
+                                player.sendMessage(
+                                        Component.text("Folgende Challenges waren aktiv:")
+                                                .color(TextColor.color(255, 177, 68))
+                                                .decorate(TextDecoration.BOLD)
+                                );
+                                while (result.next()) {
+                                    player.sendMessage(
+                                            Component.text(" - ")
+                                                    .color(TextColor.color(0, 36, 254))
+                                                .append(Component.text(result.getString("name"))
+                                                    .color(TextColor.color(255, 177, 68))
+                                                    .decorate(TextDecoration.BOLD))
+                                    );
                                 }
+                                result.beforeFirst();
                             }
+
                         } catch (SQLException exception) {
                             exception.printStackTrace();
                         }
 
 
                         for (Player currentPlayer : Bukkit.getOnlinePlayers()) {
-                            currentPlayer.sendMessage("");
-                            currentPlayer.sendMessage("§6§1");
-                            currentPlayer.sendMessage("");
-                            currentPlayer.sendMessage("§1--------------------------------------");
 
+                            currentPlayer.sendMessage("");
+                            currentPlayer.sendMessage(
+                                    Component.text("--------------------------------------")
+                                            .color(TextColor.color(0, 36, 254))
+                            );
 
-                            //the the Player's gamemodes to spectator
+                            //the Player's gamemodes to spectator
                             new BukkitRunnable() {
                                 @Override
                                 public void run() {
@@ -83,6 +126,8 @@ public class DamageListener implements Listener {
                                 }
                             }.runTaskLater(Main.getPlugin(), 1);
                         }
+
+
 
 
 
@@ -108,7 +153,7 @@ public class DamageListener implements Listener {
                             insertAttempts.setBoolean(3, false);
                             insertAttempts.execute();
 
-                            //get the attemp ID
+                            //get the attempt ID
                             ResultSet resultLastID = selectLastID.executeQuery();
 
                             if (resultLastID.next()) {
@@ -135,7 +180,11 @@ public class DamageListener implements Listener {
                                 }
 
                             }else {
-                                Bukkit.broadcast(Component.text("§4Etwas ist beim Loggen des Trys schiefgelaufen!"));
+                                Bukkit.broadcast(
+                                        Component.text("Etwas ist beim Eintragen des Trys in die Datenbank schiefgelaufen!")
+                                                .color(TextColor.color(255, 0, 0))
+                                );
+
                             }
 
 
