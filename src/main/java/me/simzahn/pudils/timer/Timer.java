@@ -2,21 +2,16 @@ package me.simzahn.pudils.timer;
 
 import me.simzahn.pudils.Main;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class Timer {
 
     private int seconds;
     private boolean isRunning = false;
     private BukkitTask runnable;
+
     private String SELECT = "SELECT uuid,playing FROM player";
 
     public Timer() {
@@ -33,6 +28,7 @@ public class Timer {
             Bukkit.getOnlinePlayers().forEach( player -> player.sendMessage("§4§fDer Timer konnte nicht gestartet werden, weil er bereits läuft!"));
         }else {
             isRunning = true;
+            Main.getPlugin().getChallengeManager().toggleChallenges(true);
             this.runnable = new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -54,6 +50,7 @@ public class Timer {
         if(!this.isRunning) {
             Bukkit.getOnlinePlayers().forEach( player -> player.sendMessage("§4§fDer Timer konnte nicht gestoppt werden, weil er bereit gestoppt wurde!") );
         }else {
+            Main.getPlugin().getChallengeManager().toggleChallenges(false);
             for (Player currentPlayer :  Bukkit.getOnlinePlayers()) {
                 currentPlayer.sendActionBar("§4§fDer Timer wurde gestoppt!");
             }
