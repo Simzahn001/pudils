@@ -1,9 +1,6 @@
 package me.simzahn.pudils.timer;
 
 import me.simzahn.pudils.Main;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -14,6 +11,8 @@ public class Timer {
     private int seconds;
     private boolean isRunning = false;
     private BukkitTask runnable;
+
+    private String SELECT = "SELECT uuid,playing FROM player";
 
     public Timer() {
         this.seconds = Main.getPlugin().getConfig().getInt("timer.seconds");
@@ -26,13 +25,7 @@ public class Timer {
 
     public void resume() {
         if(this.isRunning) {
-            Bukkit.getOnlinePlayers().forEach( player -> {
-                player.sendMessage(
-                        Component.text("Der Timer konnte nicht gestartet werden, weil er bereits läuft!")
-                                .color(TextColor.color(255, 0, 0))
-                                .decorate(TextDecoration.BOLD)
-                );
-            });
+            Bukkit.getOnlinePlayers().forEach( player -> player.sendMessage("§4§fDer Timer konnte nicht gestartet werden, weil er bereits läuft!"));
         }else {
             isRunning = true;
             Main.getPlugin().getChallengeManager().toggleChallenges(true);
@@ -44,16 +37,9 @@ public class Timer {
                         stop();
                     }
 
-                    Bukkit.getOnlinePlayers().forEach(player -> {
-                        player.sendActionBar(
-                                Component.text((
-                    /*hours   -->*/     seconds/60/60<10 ? "0"+seconds/60/60 : seconds /60/60) + ":"
-                    /*minutes -->*/     + (seconds/60%60<10?"0"+seconds/60%60:seconds/60%60) + ":"
-                    /*seconds -->*/     + (seconds%60<10?"0"+seconds%60:seconds%60))
-                                        .color(TextColor.color(255, 177, 68))
-                                        .decorate(TextDecoration.BOLD)
-                        );
-                    });
+                    for(Player currentPlayer : Bukkit.getOnlinePlayers()) {
+                        currentPlayer.sendActionBar("§6§l" + ((int)seconds/60/60<10?"0"+(int)seconds/60/60:(int)seconds/60/60) + ":" + (seconds/60%60<10?"0"+seconds/60%60:seconds/60%60) + ":" + (seconds%60<10?"0"+seconds%60:seconds%60));
+                    }
                     seconds++;
                 }
             }.runTaskTimer(Main.getPlugin(), 20, 20);
@@ -62,23 +48,12 @@ public class Timer {
 
     public void stop() {
         if(!this.isRunning) {
-            Bukkit.getOnlinePlayers().forEach(player -> {
-                player.sendMessage(
-                        Component.text("Der Timer konnte nicht gestoppt werden, weil er bereits gestoppt ist!")
-                                .color(TextColor.color(255, 0, 0))
-                                .decorate(TextDecoration.BOLD)
-                );
-            });
+            Bukkit.getOnlinePlayers().forEach( player -> player.sendMessage("§4§fDer Timer konnte nicht gestoppt werden, weil er bereit gestoppt wurde!") );
         }else {
             Main.getPlugin().getChallengeManager().toggleChallenges(false);
-            Bukkit.getOnlinePlayers().forEach(p -> {
-                p.sendActionBar(
-                        Component.text("Der Timer wurde gestoppt!")
-                                .color(TextColor.color(256,0,0))
-                                .decorate(TextDecoration.BOLD)
-                );
-            });
-            
+            for (Player currentPlayer :  Bukkit.getOnlinePlayers()) {
+                currentPlayer.sendActionBar("§4§fDer Timer wurde gestoppt!");
+            }
             Main.getPlugin().getConfig().set("timer.seconds", seconds);
             Main.getPlugin().saveConfig();
             this.isRunning = false;
