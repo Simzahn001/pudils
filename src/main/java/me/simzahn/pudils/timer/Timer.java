@@ -5,6 +5,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -13,6 +14,7 @@ public class Timer {
     private int seconds;
     private boolean isRunning = false;
     private BukkitTask runnable;
+
 
     public Timer() {
         this.seconds = Main.getPlugin().getConfig().getInt("timer.seconds");
@@ -34,6 +36,7 @@ public class Timer {
             });
         }else {
             isRunning = true;
+            Main.getPlugin().getChallengeManager().toggleChallenges(true);
             this.runnable = new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -68,6 +71,9 @@ public class Timer {
                 );
             });
         }else {
+
+            Main.getPlugin().getChallengeManager().toggleChallenges(false);
+            
             Bukkit.getOnlinePlayers().forEach(p -> {
                 p.sendActionBar(
                         Component.text("Der Timer wurde gestoppt!")
@@ -75,6 +81,7 @@ public class Timer {
                                 .decorate(TextDecoration.BOLD)
                 );
             });
+
             Main.getPlugin().getConfig().set("timer.seconds", seconds);
             Main.getPlugin().saveConfig();
             this.isRunning = false;

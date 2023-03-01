@@ -1,6 +1,7 @@
 package me.simzahn.pudils;
 
 import com.zaxxer.hikari.HikariDataSource;
+import me.simzahn.pudils.challenges.ChallengeManager;
 import me.simzahn.pudils.commands.DifficultyCom;
 import me.simzahn.pudils.commands.TeamCom;
 import me.simzahn.pudils.db.Updater;
@@ -27,12 +28,13 @@ public final class Main extends JavaPlugin {
     private static Timer timer;
     private static Main plugin;
     private HikariDataSource hikari;
+    private ChallengeManager challengeManager;
+    private PluginManager pluginManager;
 
     @Override
     public void onEnable() {
         //Main Singleton
         plugin = this;
-        timer = new Timer();
 
         //HikariCP Setup
         hikari = new HikariDataSource();
@@ -51,7 +53,13 @@ public final class Main extends JavaPlugin {
             e.printStackTrace();
         }
 
+        //set up the timer
+        timer = new Timer();
 
+        //register challenges
+        challengeManager = new ChallengeManager();
+
+        //register commands
         getCommand("timer").setExecutor(new TimerCom());
         getCommand("timer").setTabCompleter(new TimerCom());
 
@@ -61,8 +69,8 @@ public final class Main extends JavaPlugin {
         getCommand("team").setExecutor(new TeamCom());
         getCommand("team").setTabCompleter(new TeamCom());
 
-
-        PluginManager pluginManager = Bukkit.getPluginManager();
+        //register listeners
+        pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new EntityRegenerateListener(), this);
         pluginManager.registerEvents(new InventoryClickListener(), this);
         pluginManager.registerEvents(new JoinListener(), this);
@@ -120,4 +128,11 @@ public final class Main extends JavaPlugin {
 
     }
 
+    public PluginManager getPluginManager() {
+        return pluginManager;
+    }
+
+    public ChallengeManager getChallengeManager() {
+        return challengeManager;
+    }
 }
