@@ -5,7 +5,7 @@ import me.simzahn.pudils.challenges.ChallengeManager;
 import me.simzahn.pudils.commands.DifficultyCom;
 import me.simzahn.pudils.commands.TeamCom;
 import me.simzahn.pudils.db.Updater;
-import me.simzahn.pudils.listeners.DamageListener;
+import me.simzahn.pudils.death.DamageListener;
 import me.simzahn.pudils.listeners.EntityRegenerateListener;
 import me.simzahn.pudils.listeners.InventoryClickListener;
 import me.simzahn.pudils.listeners.JoinListener;
