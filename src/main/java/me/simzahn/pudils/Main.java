@@ -5,10 +5,7 @@ import me.simzahn.pudils.challenges.ChallengeManager;
 import me.simzahn.pudils.commands.DifficultyCom;
 import me.simzahn.pudils.commands.TeamCom;
 import me.simzahn.pudils.db.Updater;
-import me.simzahn.pudils.listeners.DamageListener;
-import me.simzahn.pudils.listeners.EntityRegenerateListener;
-import me.simzahn.pudils.listeners.InventoryClickListener;
-import me.simzahn.pudils.listeners.JoinListener;
+import me.simzahn.pudils.listeners.*;
 import me.simzahn.pudils.timer.Timer;
 import me.simzahn.pudils.timer.TimerCom;
 import me.simzahn.pudils.util.Difficulty;
@@ -74,6 +71,7 @@ public final class Main extends JavaPlugin {
         pluginManager.registerEvents(new EntityRegenerateListener(), this);
         pluginManager.registerEvents(new InventoryClickListener(), this);
         pluginManager.registerEvents(new JoinListener(), this);
+        pluginManager.registerEvents(new LeaveListener(), this);
         pluginManager.registerEvents(new DamageListener(), this);
     }
 
