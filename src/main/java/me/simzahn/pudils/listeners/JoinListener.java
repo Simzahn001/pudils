@@ -21,13 +21,33 @@ public class JoinListener implements Listener {
     private final String SELECT = "SELECT * FROM player WHERE uuid=?";
     private final String INSERT = "INSERT INTO player(uuid, name, playing) VALUES(?,?,?)";
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onJoin(PlayerJoinEvent event) {
 
         new BukkitRunnable() {
             @Override
             public void run() {
 
+                //insert Player login
+                try(Connection connection = Main.getPlugin().getHikari().getConnection();
+                    PreparedStatement insertLogin = connection.prepareStatement("""
+                        INSERT INTO playerJoinLeave(playerID, time, online) 
+                        SELECT (
+                            player.ID,
+                            CURRENT_TIMESTAMP,
+                            ?
+                        ) FROM player WHERE uuid = ?;
+                    """)) {
+                    insertLogin.setBoolean(1, true);
+                    insertLogin.setString(2, event.getPlayer().getUniqueId().toString());
+                    insertLogin.execute();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+
+
+                //check if the player is registered in the database
+                //if not, add him
                 try(Connection connection = Main.getPlugin().getHikari().getConnection();
                     PreparedStatement select = connection.prepareStatement(SELECT)) {
 
