@@ -5,12 +5,13 @@ import me.simzahn.pudils.challenges.ChallengeManager;
 import me.simzahn.pudils.commands.DifficultyCom;
 import me.simzahn.pudils.commands.TeamCom;
 import me.simzahn.pudils.db.Updater;
-import me.simzahn.pudils.listeners.*;
+import me.simzahn.pudils.death.DamageListener;
+import me.simzahn.pudils.listeners.EntityRegenerateListener;
+import me.simzahn.pudils.listeners.InventoryClickListener;
+import me.simzahn.pudils.listeners.JoinListener;
 import me.simzahn.pudils.timer.Timer;
 import me.simzahn.pudils.timer.TimerCom;
 import me.simzahn.pudils.util.Difficulty;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -71,7 +72,6 @@ public final class Main extends JavaPlugin {
         pluginManager.registerEvents(new EntityRegenerateListener(), this);
         pluginManager.registerEvents(new InventoryClickListener(), this);
         pluginManager.registerEvents(new JoinListener(), this);
-        pluginManager.registerEvents(new LeaveListener(), this);
         pluginManager.registerEvents(new DamageListener(), this);
     }
 
@@ -104,15 +104,7 @@ public final class Main extends JavaPlugin {
     public static void setDifficulty(Difficulty difficulty) {
         plugin.getConfig().set("difficulty", difficulty.name());
         Main.getPlugin().saveConfig();
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            player.sendMessage(
-                    Component.text("Die Difficulty wurde auf ")
-                            .color(TextColor.color(33, 255, 0))
-                        .append(Component.text(difficulty.getName()))
-                        .append(Component.text(" gesetzt")
-                            .color(TextColor.color(33, 255, 0)))
-            );
-        });
+        Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(ChatColor.GREEN + "Die Difficulty wurde auf " + difficulty.getName() + "§r" + ChatColor.GREEN + " gesetzt"));
 
         if (difficulty == Difficulty.HALF_HEART) {
             for (Player currentPlayer : Bukkit.getOnlinePlayers()) {
