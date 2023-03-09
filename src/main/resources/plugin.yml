@@ -1,7 +1,7 @@
 name: Pudils
 version: ${project.version}
 main: me.simzahn.pudils.Main
-api-version: 1.17
+api-version: 1.19
 commands:
   timer:
     description: To control the Timer! Use /timer help to gather more information!
