@@ -36,8 +36,10 @@ public class LeaveListener implements Listener {
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
+            }
+        }.runTaskAsynchronously(Main.getPlugin());
 
-        }
+    }
 
-    }.runTaskAsynchronously(Main.getPlugin());
 }
+

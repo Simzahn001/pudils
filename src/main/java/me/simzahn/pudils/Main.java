@@ -12,6 +12,9 @@ import me.simzahn.pudils.listeners.JoinListener;
 import me.simzahn.pudils.timer.Timer;
 import me.simzahn.pudils.timer.TimerCom;
 import me.simzahn.pudils.util.Difficulty;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -37,11 +40,19 @@ public final class Main extends JavaPlugin {
         //HikariCP Setup
         hikari = new HikariDataSource();
         hikari.setDataSourceClassName("com.mysql.cj.jdbc.MysqlDataSource");
-        hikari.addDataSourceProperty("serverName", this.getConfig().get("db.ip"));
-        hikari.addDataSourceProperty("port", this.getConfig().get("db.port"));
-        hikari.addDataSourceProperty("databaseName", this.getConfig().get("db.name"));
-        hikari.addDataSourceProperty("user", this.getConfig().get("db.user"));
-        hikari.addDataSourceProperty("password", this.getConfig().get("db.password"));
+        try {
+            hikari.addDataSourceProperty("serverName", this.getConfig().get("db.ip"));
+            hikari.addDataSourceProperty("port", this.getConfig().get("db.port"));
+            hikari.addDataSourceProperty("databaseName", this.getConfig().get("db.name"));
+            hikari.addDataSourceProperty("user", this.getConfig().get("db.user"));
+            hikari.addDataSourceProperty("password", this.getConfig().get("db.password"));
+        } catch (NullPointerException exception) {
+            Bukkit.broadcast(
+                    Component.text("Die Login-Daten für die DB konnten nicht aus der Config File gelesen werden!")
+                            .color(TextColor.color(255, 0, 0))
+                            .decorate(TextDecoration.BOLD)
+            );
+        }
 
         //SADU Updater
         Updater saduUpdater = new Updater(hikari);
@@ -81,7 +92,9 @@ public final class Main extends JavaPlugin {
         if(hikari != null) {
             hikari.close();
         }
-        timer.stop();
+        if (timer != null) {
+            timer.stop();
+        }
 
     }
 
