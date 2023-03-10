@@ -31,7 +31,7 @@ public final class Main extends JavaPlugin {
     private static Timer timer;
     private static Main plugin;
     private HikariDataSource hikari;
-    private ChallengeManager challengeManager;
+    private static ChallengeManager challengeManager;
     private PluginManager pluginManager;
 
     @Override
@@ -151,7 +151,7 @@ public final class Main extends JavaPlugin {
         return pluginManager;
     }
 
-    public ChallengeManager getChallengeManager() {
+    public static ChallengeManager getChallengeManager() {
         return challengeManager;
     }
 }

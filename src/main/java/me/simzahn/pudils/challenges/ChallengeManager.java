@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.sql.Connection;
@@ -152,6 +153,74 @@ public class ChallengeManager {
             Bukkit.broadcast(Component.text("Die aktiven Challenges konnten nicht abgefragt werden!")
                     .color(TextColor.color(255, 0, 0)).decorate(TextDecoration.BOLD));
             throw new RuntimeException(e);
+        }
+    }
+
+
+    //Returns whether a challenge is active or not.
+    //Returns null, if the challenge isn't found in the database.
+    public @Nullable Boolean isChallengeEnabled(@NotNull Challenge challenge) {
+        try(Connection connection = Main.getPlugin().getHikari().getConnection();
+            PreparedStatement stmt = connection.prepareStatement("SELECT active FROM challenge WHERE name=?")) {
+
+            stmt.setString(1, challenge.getName());
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getBoolean("active");
+            }
+            return null;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //Returns whether a challenge is active or not.
+    //Returns null, if the challenge isn't found in the database.
+    public @Nullable Boolean isChallengeEnabled(@NotNull String challengeName) {
+        Challenge challenge = getChallenge(challengeName);
+        if (challenge ==  null) {
+            return null;
+        }
+        return isChallengeEnabled(challenge);
+    }
+
+
+    public boolean enableChallenge(Challenge challenge) {
+        try (Connection connection = Main.getPlugin().getHikari().getConnection();
+            PreparedStatement stmt = connection.prepareStatement("UPDATE challenge SET active=true WHERE name=?")) {
+
+            stmt.setString(1, challenge.getName());
+            stmt.execute();
+
+            Bukkit.broadcast(
+                    Component.text(challenge.getDisplayName())
+                        .append(Component.text(" wurde aktiviert!"))
+            );
+
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+
+    public boolean disableChallenge(Challenge challenge) {
+        try (Connection connection = Main.getPlugin().getHikari().getConnection();
+             PreparedStatement stmt = connection.prepareStatement("UPDATE challenge SET active=false WHERE name=?")) {
+
+            stmt.setString(1, challenge.getName());
+            stmt.execute();
+
+            Bukkit.broadcast(
+                    Component.text(challenge.getDisplayName())
+                            .append(Component.text(" wurde aktiviert!"))
+            );
+
+            return true;
+        } catch (SQLException e) {
+            return false;
         }
     }
 
