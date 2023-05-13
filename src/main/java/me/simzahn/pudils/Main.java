@@ -3,6 +3,7 @@ package me.simzahn.pudils;
 import com.zaxxer.hikari.HikariDataSource;
 import me.simzahn.pudils.challenges.ChallengeManager;
 import me.simzahn.pudils.commands.DifficultyCom;
+import me.simzahn.pudils.commands.ResetCom;
 import me.simzahn.pudils.commands.TeamCom;
 import me.simzahn.pudils.db.Updater;
 import me.simzahn.pudils.death.DamageListener;
@@ -78,12 +79,21 @@ public final class Main extends JavaPlugin {
         getCommand("team").setExecutor(new TeamCom());
         getCommand("team").setTabCompleter(new TeamCom());
 
+        getCommand("reset").setExecutor(new ResetCom());
+
         //register listeners
         pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new EntityRegenerateListener(), this);
         pluginManager.registerEvents(new InventoryClickListener(), this);
         pluginManager.registerEvents(new JoinListener(), this);
         pluginManager.registerEvents(new DamageListener(), this);
+        pluginManager.registerEvents(new LeaveListener(), this);
+        pluginManager.registerEvents(new ResetCom(), this);
+
+        //initialize config for difficulty
+        getConfig().set("difficulty", Difficulty.NORMAl.name());
+        saveConfig();
+
     }
 
     @Override
