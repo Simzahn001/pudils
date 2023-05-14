@@ -21,25 +21,24 @@ public class LeaveListener implements Listener {
             public void run() {
 
                 //insert Player logoff
-                try(Connection connection = Main.getPlugin().getHikari().getConnection();
-                    PreparedStatement insertLogin = connection.prepareStatement("""
-                        INSERT INTO playerJoinLeave(playerID, time, online) 
-                        SELECT (
-                            player.ID,
+                try (Connection connection = Main.getPlugin().getHikari().getConnection();
+                     PreparedStatement insertLogin = connection.prepareStatement("""
+                        INSERT INTO playerJoinLeave(playerID, time, online)
+                        VALUES (
+                            (SELECT ID FROM player WHERE uuid=?),
                             CURRENT_TIMESTAMP,
                             ?
-                        ) FROM player WHERE uuid = ?;
+                        );
                     """)) {
-                    insertLogin.setBoolean(1, false);
-                    insertLogin.setString(2, event.getPlayer().getUniqueId().toString());
+                    insertLogin.setString(1, event.getPlayer().getUniqueId().toString());
+                    insertLogin.setBoolean(2, false);
                     insertLogin.execute();
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
+
             }
+
         }.runTaskAsynchronously(Main.getPlugin());
-
     }
-
 }
-

@@ -34,7 +34,7 @@ public class DamageListener implements Listener {
                     @Override
                     public void run() {
                         finishedTry.informPlayers();
-                        if(finishedTry.log()) {
+                        if(!finishedTry.log()) {
                             Bukkit.broadcast(
                                     Component.text("Beim Loggen des Trys ist etwas schiefgelaufen!")
                                             .color(TextColor.color(255, 0, 0))

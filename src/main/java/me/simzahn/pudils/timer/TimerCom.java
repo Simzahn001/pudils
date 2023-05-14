@@ -24,22 +24,11 @@ public class TimerCom implements CommandExecutor, TabCompleter {
             if(args.length==1) {
 
                 switch (args[0]) {
-                    case "start":
-                        Main.getTimer().start();
-                        break;
-                    case "stop":
-                    case "s":
-                        Main.getTimer().stop();
-                        break;
-                    case "resume":
-                    case "r":
-                        Main.getTimer().resume();
-                        break;
-                    case "reset":
-                        Main.getTimer().reset();
-                        break;
-                    case "help":
-                    case "?":
+                    case "start" -> Main.getTimer().start(true);
+                    case "stop", "s" -> Main.getTimer().stop(true);
+                    case "resume", "r" -> Main.getTimer().resume(true);
+                    case "reset" -> Main.getTimer().reset(true);
+                    case "help", "?" -> {
                         player.sendMessage("§1-------------§6<§6§fTimer§6>§1-------------");
                         player.sendMessage("§6Mit diesem Command kannst du den Timer kontrollieren!");
                         player.sendMessage("§1/timer <action>");
@@ -49,19 +38,18 @@ public class TimerCom implements CommandExecutor, TabCompleter {
                         player.sendMessage("§6- §1resume §6Lässt dem Timer weiterlaufen");
                         player.sendMessage("§6- §1reset §6Setzt den Timer auf 00:00:00 zurück, startet ihn jedoch nicht");
                         player.sendMessage("§1-------------------------------------------");
-
                         player.sendMessage(
                                 Component.text("-------------")
                                         .color(TextColor.color(0, 36, 254))
-                                    .append(Component.text("<")
-                                        .color(TextColor.color(255, 177, 68)))
-                                    .append(Component.text("Timer")
-                                        .color(TextColor.color(255, 177, 68))
-                                        .decorate(TextDecoration.BOLD))
-                                    .append(Component.text(">")
-                                        .color(TextColor.color(255, 177, 68)))
-                                    .append(Component.text("-------------")
-                                        .color(TextColor.color(0, 36, 254)))
+                                        .append(Component.text("<")
+                                                .color(TextColor.color(255, 177, 68)))
+                                        .append(Component.text("Timer")
+                                                .color(TextColor.color(255, 177, 68))
+                                                .decorate(TextDecoration.BOLD))
+                                        .append(Component.text(">")
+                                                .color(TextColor.color(255, 177, 68)))
+                                        .append(Component.text("-------------")
+                                                .color(TextColor.color(0, 36, 254)))
                         );
                         player.sendMessage(
                                 Component.text("Mit diesem Command kannst du den Timer kontrollieren!")
@@ -76,9 +64,9 @@ public class TimerCom implements CommandExecutor, TabCompleter {
                                         .color(TextColor.color(255, 177, 68))
                                         .decorate(TextDecoration.BOLD)
                         );
-                        break;
-                    default:
-                        break;
+                    }
+                    default -> {
+                    }
                 }
 
             }else {
