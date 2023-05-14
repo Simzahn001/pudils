@@ -46,6 +46,10 @@ public class ResetCom implements CommandExecutor, Listener {
         Main.getTimer().reset();
 
 
+        //the script can be found in the resources folder
+        //copy the script to the server folder to make it work
+        //the script must not be contained in the jar file!
+
         //run the bash script
         //the bash script deletes all words, sets a new seeds in the config and then restarts the server
         //check if file exists
