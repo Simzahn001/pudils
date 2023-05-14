@@ -28,24 +28,6 @@ public class JoinListener implements Listener {
             @Override
             public void run() {
 
-                //insert Player login
-                try(Connection connection = Main.getPlugin().getHikari().getConnection();
-                    PreparedStatement insertLogin = connection.prepareStatement("""
-                        INSERT INTO playerJoinLeave(playerID, time, online) 
-                        SELECT (
-                            player.ID,
-                            CURRENT_TIMESTAMP,
-                            ?
-                        ) FROM player WHERE uuid = ?;
-                    """)) {
-                    insertLogin.setBoolean(1, true);
-                    insertLogin.setString(2, event.getPlayer().getUniqueId().toString());
-                    insertLogin.execute();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-
-
                 //check if the player is registered in the database
                 //if not, add him
                 try(Connection connection = Main.getPlugin().getHikari().getConnection();
@@ -60,12 +42,18 @@ public class JoinListener implements Listener {
                         insert.setString(2, event.getPlayer().getName());
                         insert.setBoolean(3, false);
                         insert.execute();
-                        event.getPlayer().kick(
-                                Component.text("Du wirst gerade in unseren Datenbanken registriert! "
-                                + "Versuche es in 10s erneut. Diese Nachricht sollte nur beim 1. Mal Joinen auftreten. "
-                                + "Sollte dies nicht so sein, kontaktiere bitte @Simzahn")
-                                        .color(TextColor.color(255, 0, 0))
-                        );
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                event.getPlayer().kick(
+                                        Component.text("Du wirst gerade in unseren Datenbanken registriert! "
+                                                        + "Versuche es in 10s erneut. Diese Nachricht sollte nur beim 1. Mal Joinen auftreten. "
+                                                        + "Sollte dies nicht so sein, kontaktiere bitte @Simzahn")
+                                                .color(TextColor.color(255, 0, 0))
+                                );
+                            }
+                        }.runTask(Main.getPlugin());
+
                     }else {
                         if (!result.getBoolean("playing")) {
                             new BukkitRunnable() {
@@ -96,6 +84,23 @@ public class JoinListener implements Listener {
                     exception.printStackTrace();
                 }
 
+
+                //insert Player login
+                try(Connection connection = Main.getPlugin().getHikari().getConnection();
+                    PreparedStatement insertLogin = connection.prepareStatement("""
+                        INSERT INTO playerJoinLeave(playerID, time, online)
+                        VALUES (
+                            (SELECT ID FROM player WHERE uuid=?),
+                            CURRENT_TIMESTAMP,
+                            ?
+                        );
+                    """)) {
+                    insertLogin.setString(1, event.getPlayer().getUniqueId().toString());
+                    insertLogin.setBoolean(2, true);
+                    insertLogin.execute();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
 
             }
         }.runTaskAsynchronously(Main.getPlugin());

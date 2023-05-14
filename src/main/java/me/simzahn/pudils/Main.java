@@ -40,11 +40,13 @@ public final class Main extends JavaPlugin {
 
         //HikariCP Setup
         hikari = new HikariDataSource();
-        hikari.setDataSourceClassName("com.mysql.cj.jdbc.MysqlDataSource");
+        hikari.setDriverClassName("org.mariadb.jdbc.Driver");
         try {
-            hikari.addDataSourceProperty("serverName", this.getConfig().get("db.ip"));
-            hikari.addDataSourceProperty("port", this.getConfig().get("db.port"));
-            hikari.addDataSourceProperty("databaseName", this.getConfig().get("db.name"));
+            String serverName = this.getConfig().getString("db.ip");
+            String port = this.getConfig().getString("db.port");
+            String databaseName = this.getConfig().getString("db.name");
+
+            hikari.setJdbcUrl("jdbc:mariadb://" + serverName + ":" + port + "/" + databaseName);
             hikari.addDataSourceProperty("user", this.getConfig().get("db.user"));
             hikari.addDataSourceProperty("password", this.getConfig().get("db.password"));
         } catch (NullPointerException exception) {

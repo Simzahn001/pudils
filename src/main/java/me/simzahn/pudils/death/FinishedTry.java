@@ -48,33 +48,30 @@ public class FinishedTry {
         try (Connection connection = Main.getPlugin().getHikari().getConnection();
 
              PreparedStatement insertAttempt = connection.prepareStatement("""
-             INSERT INTO attempt(duration, nether, end, successful, failedPlayerID)
-             SELECT (
-                ?,
-                ?,
-                ?,
-                ?,
-                player.ID
-             ) FROM player WHERE uuid = ?
-             RETURNING attempt.ID;
+                INSERT INTO attempt(duration, nether, end, successful, failedPlayerID)
+                VALUES (
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        (SELECT ID FROM player where uuid=?)
+                       )
+                RETURNING attempt.ID;
              """);
 
              PreparedStatement insertActiveChallenges = connection.prepareStatement("""
-             INSERT INTO attemptChallenge(attemptID, challengeID)
-             SELECT (
-                 ?,
-                 challenge.ID
-             ) FROM challenge WHERE active = true;
+                INSERT INTO attemptChallenge(attemptID, challengeID)
+                    SELECT ?, challenge.ID
+                    FROM challenge
+                    WHERE active = true;
              """);
 
              PreparedStatement insertPlayers = connection.prepareStatement("""
-             INSERT INTO attemptPlayer(attemptID, playerID)
-             SELECT (
-                 ?,
-                 player.ID
-             ) FROM player
-             LEFT JOIN playerOnline pOnline ON player.ID = pOnline.playerID
-             WHERE playing = true AND pOnline.online = true;
+                INSERT INTO attemptPlayer(attemptID, playerID)
+                    SELECT ?,player.ID
+                    FROM player
+                        LEFT Join playerOnline pOnline ON player.ID = pOnline.playerID
+                    WHERE pOnline.online=true AND player.playing=true;
              """)
         ) {
 
