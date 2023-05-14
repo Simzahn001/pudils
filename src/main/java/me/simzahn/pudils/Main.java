@@ -63,6 +63,9 @@ public final class Main extends JavaPlugin {
             e.printStackTrace();
         }
 
+        //open Bungeecord plugin channels
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+
         //set up the timer
         timer = new Timer();
 
