@@ -10,6 +10,7 @@ import me.simzahn.pudils.death.DamageListener;
 import me.simzahn.pudils.listeners.EntityRegenerateListener;
 import me.simzahn.pudils.listeners.InventoryClickListener;
 import me.simzahn.pudils.listeners.JoinListener;
+import me.simzahn.pudils.listeners.LeaveListener;
 import me.simzahn.pudils.timer.Timer;
 import me.simzahn.pudils.timer.TimerCom;
 import me.simzahn.pudils.util.Difficulty;
