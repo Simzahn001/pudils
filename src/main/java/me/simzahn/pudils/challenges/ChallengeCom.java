@@ -1,6 +1,7 @@
 package me.simzahn.pudils.challenges;
 
 import me.simzahn.pudils.Main;
+import me.simzahn.pudils.inventory.ChallengeInventory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -8,6 +9,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +25,12 @@ public class ChallengeCom implements CommandExecutor, TabCompleter {
 
         switch (strings.length) {
             case 0:
-                //@TODO open inventory
+                if (commandSender instanceof Player) {
+                    Player player = (Player) commandSender;
+                    ChallengeInventory challengeInv = new ChallengeInventory(Main.getPlugin());
+                    player.openInventory(challengeInv.getInventory());
+                }
+
             break;
 
             //(de-) activate challenges
@@ -51,8 +58,8 @@ public class ChallengeCom implements CommandExecutor, TabCompleter {
                         //retrieve boolean
                         boolean enabled;
                         switch (strings[1]) {
-                            case "enabled", "active", "true", "a", "t" -> enabled = true;
-                            case "disabled", "inactive", "false", "i", "f" -> enabled = false;
+                            case "enable", "active", "true", "a", "t" -> enabled = true;
+                            case "disable", "inactive", "false", "i", "f" -> enabled = false;
                             //inform the player, that the boolean was invalid
                             default -> {
                                 commandSender.sendMessage(
@@ -96,25 +103,21 @@ public class ChallengeCom implements CommandExecutor, TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
 
-        ArrayList<String> list = new ArrayList<>();
+        ArrayList<String> list = new ArrayList<String>();
 
         //as the first argument, a challenge should be returned
         if (strings.length == 1) {
 
-            //get all challenges
-            Main.getChallengeManager().getAllRegisteredChallenges().forEach(challenge -> {
-                list.add(challenge.getDisplayName());
-            });
-
+            //get the trimmed first argument
             String arg1 = strings[0];
-            arg1.trim();
+            arg1 = arg1.trim();
 
-            //if the player starts typing, only suggestions with the starting letters they used, should be shown
-            list.forEach(challenge -> {
-                if (!challenge.startsWith(arg1)) {
-                    list.remove(challenge);
+            //add all challenges to the list, which start with the argument in a for loop (ignoring the case)
+            for (Challenge challenge : Main.getChallengeManager().getAllRegisteredChallenges()) {
+                if (challenge.getName().toLowerCase().startsWith(arg1.toLowerCase())) {
+                    list.add(challenge.getName());
                 }
-            });
+            }
 
         } else if (strings.length == 2) {
 

@@ -1,7 +1,9 @@
 package me.simzahn.pudils;
 
 import com.zaxxer.hikari.HikariDataSource;
+import me.simzahn.pudils.challenges.ChallengeCom;
 import me.simzahn.pudils.challenges.ChallengeManager;
+import me.simzahn.pudils.challenges.TestChallenge;
 import me.simzahn.pudils.commands.DifficultyCom;
 import me.simzahn.pudils.commands.ResetCom;
 import me.simzahn.pudils.commands.TeamCom;
@@ -81,6 +83,9 @@ public final class Main extends JavaPlugin {
 
         getCommand("difficulty").setExecutor(new DifficultyCom());
         getCommand("difficulty").setTabCompleter(new DifficultyCom());
+
+        getCommand("challenge").setExecutor(new ChallengeCom());
+        getCommand("challenge").setTabCompleter(new ChallengeCom());
 
         getCommand("team").setExecutor(new TeamCom());
         getCommand("team").setTabCompleter(new TeamCom());

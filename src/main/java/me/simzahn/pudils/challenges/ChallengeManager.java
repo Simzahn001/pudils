@@ -5,8 +5,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,13 +25,23 @@ public class ChallengeManager {
 
     private final List<Challenge> registeredChallenges;
 
+    //the key to retrieve the challenge's name out of the PDC
+    private final NamespacedKey key = new NamespacedKey(Main.getPlugin(), "challenge");
+
+
     public ChallengeManager() {
         registeredChallenges = new ArrayList<>();
     }
 
+
     //register a new challenge
     public void registerChallenge(Challenge challenge) {
         registeredChallenges.add(challenge);
+
+        //set the PDC of the item to the challenge name
+        ItemMeta meta = challenge.getItem().getItemMeta();
+        meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, challenge.getName());
+        challenge.getItem().setItemMeta(meta);
 
         //check if the challenge is already registered in the database
         final String SELECT = "SELECT ID FROM challenge WHERE name=?";
@@ -41,12 +54,13 @@ public class ChallengeManager {
 
             if (!resultSelect.next()) {
                 //register the challenge
-                final String INSERT = "INSERT INTO challenge (name, displayName, active) VALUES(name=?, displayName=?, active=?)";
+                final String INSERT = "INSERT INTO challenge (name, displayName, active) VALUES(?, ?, ?);";
                 PreparedStatement stmtInsert = connection.prepareStatement(INSERT);
                 stmtInsert.setString(1, challenge.getName());
-                stmtInsert.setString(2, challenge.getDisplayName());
+                stmtInsert.setString(2, "none");
                 stmtInsert.setBoolean(3, false);
                 stmtInsert.execute();
+                System.out.println();
             }
 
         } catch (SQLException e) {
@@ -116,7 +130,7 @@ public class ChallengeManager {
                             x.runTaskTimer(Main.getPlugin(), period, period);
                         } else {
                             //professional error handling xD
-                            Main.getPlugin().getLogger().info("Die Scheduler-Challenge \"" + challenge.getDisplayName() +
+                            Main.getPlugin().getLogger().info("Die Scheduler-Challenge \"" + challenge.getName() +
                                     "\" konnte nicht registriert werden, weil die Periodendauer null ticks beträgt!");
                         }
                     }
@@ -195,7 +209,7 @@ public class ChallengeManager {
             stmt.execute();
 
             Bukkit.broadcast(
-                    Component.text(challenge.getDisplayName())
+                    Component.text(challenge.getName())
                         .append(Component.text(" wurde aktiviert!"))
             );
 
@@ -214,8 +228,8 @@ public class ChallengeManager {
             stmt.execute();
 
             Bukkit.broadcast(
-                    Component.text(challenge.getDisplayName())
-                            .append(Component.text(" wurde aktiviert!"))
+                    Component.text(challenge.getName())
+                            .append(Component.text(" wurde deaktiviert!"))
             );
 
             return true;
