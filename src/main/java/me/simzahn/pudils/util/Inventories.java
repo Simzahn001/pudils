@@ -8,6 +8,12 @@ import org.bukkit.inventory.Inventory;
 
 public class Inventories {
 
+    //@TODO redo with inventory holder and PCD
+    /**
+     *   DIFFICUTLY INVENTORY HAS TO BE REDONE WITH PCD AND INVENTORY HOLDER
+     *   MIGRATE TO NEW INVENTORY CLICK LISTENER CLASS
+     */
+
     public static void openDifficultyInventory(Player player) {
         Inventory inventory = Bukkit.createInventory(null, 4*9, "§4§lDifficulties");
         for(int i =  0; i <= inventory.getSize()-1; i++) {

@@ -5,11 +5,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,13 +17,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ChallengeManager {
 
     private final List<Challenge> registeredChallenges;
 
-    //the key to retrieve the challenge's name out of the PDC
-    private final NamespacedKey key = new NamespacedKey(Main.getPlugin(), "challenge");
+
 
 
     public ChallengeManager() {
@@ -37,11 +34,6 @@ public class ChallengeManager {
     //register a new challenge
     public void registerChallenge(Challenge challenge) {
         registeredChallenges.add(challenge);
-
-        //set the PDC of the item to the challenge name
-        ItemMeta meta = challenge.getItem().getItemMeta();
-        meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, challenge.getName());
-        challenge.getItem().setItemMeta(meta);
 
         //check if the challenge is already registered in the database
         final String SELECT = "SELECT ID FROM challenge WHERE name=?";
@@ -171,9 +163,9 @@ public class ChallengeManager {
     }
 
 
-    //Returns whether a challenge is active or not.
+    //Returns whether a challenge is enabled or not.
     //Returns null, if the challenge isn't found in the database.
-    public @Nullable Boolean isChallengeEnabled(@NotNull Challenge challenge) {
+    public @NotNull Optional<Boolean> isChallengeEnabled(@NotNull Challenge challenge) {
         try(Connection connection = Main.getPlugin().getHikari().getConnection();
             PreparedStatement stmt = connection.prepareStatement("SELECT active FROM challenge WHERE name=?")) {
 
@@ -181,26 +173,17 @@ public class ChallengeManager {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return rs.getBoolean("active");
+                return Optional.of(rs.getBoolean("active"));
             }
-            return null;
+            return Optional.empty();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    //Returns whether a challenge is active or not.
-    //Returns null, if the challenge isn't found in the database.
-    public @Nullable Boolean isChallengeEnabled(@NotNull String challengeName) {
-        Challenge challenge = getChallenge(challengeName);
-        if (challenge ==  null) {
-            return null;
-        }
-        return isChallengeEnabled(challenge);
-    }
 
-
+    //enable a challenge
     public boolean enableChallenge(Challenge challenge) {
         try (Connection connection = Main.getPlugin().getHikari().getConnection();
             PreparedStatement stmt = connection.prepareStatement("UPDATE challenge SET active=true WHERE name=?")) {
@@ -220,6 +203,7 @@ public class ChallengeManager {
     }
 
 
+    //disable a challenge
     public boolean disableChallenge(Challenge challenge) {
         try (Connection connection = Main.getPlugin().getHikari().getConnection();
              PreparedStatement stmt = connection.prepareStatement("UPDATE challenge SET active=false WHERE name=?")) {
@@ -238,4 +222,22 @@ public class ChallengeManager {
         }
     }
 
+
+    //toggle a challenge.
+    //if the challenge is enabled, it will be disabled and vice versa.
+    //returns the new state of the challenge.
+    //returns null, if the challenge isn't found in the database.
+    public @NotNull Optional<Boolean> toggleChallenge(Challenge challenge) {
+        Optional<Boolean> isEnabled = isChallengeEnabled(challenge);
+        if (isEnabled.isEmpty()) {
+            return Optional.empty();
+        }
+        if (isEnabled.get()) {
+            disableChallenge(challenge);
+            return Optional.of(false);
+        } else {
+            enableChallenge(challenge);
+            return Optional.of(true);
+        }
+    }
 }

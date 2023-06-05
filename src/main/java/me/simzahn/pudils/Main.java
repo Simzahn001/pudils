@@ -10,7 +10,7 @@ import me.simzahn.pudils.commands.TeamCom;
 import me.simzahn.pudils.db.Updater;
 import me.simzahn.pudils.death.DamageListener;
 import me.simzahn.pudils.listeners.EntityRegenerateListener;
-import me.simzahn.pudils.listeners.InventoryClickListener;
+import me.simzahn.pudils.inventory.InventoryClickListener;
 import me.simzahn.pudils.listeners.JoinListener;
 import me.simzahn.pudils.listeners.LeaveListener;
 import me.simzahn.pudils.timer.Timer;
@@ -95,10 +95,12 @@ public final class Main extends JavaPlugin {
         //register listeners
         pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new EntityRegenerateListener(), this);
-        pluginManager.registerEvents(new InventoryClickListener(), this);
+        /** REDO DIFFICULTLY INVENTORY **/
+        pluginManager.registerEvents(new me.simzahn.pudils.listeners.InventoryClickListener(), this);
         pluginManager.registerEvents(new JoinListener(), this);
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new LeaveListener(), this);
+        pluginManager.registerEvents(new InventoryClickListener(), this);
         pluginManager.registerEvents(new ResetCom(), this);
 
         //initialize config for difficulty
