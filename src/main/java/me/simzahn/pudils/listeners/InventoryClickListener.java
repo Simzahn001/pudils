@@ -10,6 +10,11 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 public class InventoryClickListener implements Listener {
 
+    /**
+     *   DIFFICUTLY INVENTORY HAS TO BE REDONE WITH PCD AND INVENTORY HOLDER
+     *   MIGRATE TO NEW INVENTORY CLICK LISTENER CLASS
+     */
+
     @EventHandler
     public void onClick(InventoryClickEvent event) {
 

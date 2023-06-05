@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.sql.Connection;
@@ -16,14 +17,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ChallengeManager {
 
     private final List<Challenge> registeredChallenges;
 
+
+
+
     public ChallengeManager() {
         registeredChallenges = new ArrayList<>();
     }
+
 
     //register a new challenge
     public void registerChallenge(Challenge challenge) {
@@ -40,12 +46,13 @@ public class ChallengeManager {
 
             if (!resultSelect.next()) {
                 //register the challenge
-                final String INSERT = "INSERT INTO challenge (name, displayName, active) VALUES(name=?, displayName=?, active=?)";
+                final String INSERT = "INSERT INTO challenge (name, displayName, active) VALUES(?, ?, ?);";
                 PreparedStatement stmtInsert = connection.prepareStatement(INSERT);
                 stmtInsert.setString(1, challenge.getName());
-                stmtInsert.setString(2, challenge.getDisplayName());
+                stmtInsert.setString(2, "none");
                 stmtInsert.setBoolean(3, false);
                 stmtInsert.execute();
+                System.out.println();
             }
 
         } catch (SQLException e) {
@@ -115,7 +122,7 @@ public class ChallengeManager {
                             x.runTaskTimer(Main.getPlugin(), period, period);
                         } else {
                             //professional error handling xD
-                            Main.getPlugin().getLogger().info("Die Scheduler-Challenge \"" + challenge.getDisplayName() +
+                            Main.getPlugin().getLogger().info("Die Scheduler-Challenge \"" + challenge.getName() +
                                     "\" konnte nicht registriert werden, weil die Periodendauer null ticks beträgt!");
                         }
                     }
@@ -155,4 +162,82 @@ public class ChallengeManager {
         }
     }
 
+
+    //Returns whether a challenge is enabled or not.
+    //Returns null, if the challenge isn't found in the database.
+    public @NotNull Optional<Boolean> isChallengeEnabled(@NotNull Challenge challenge) {
+        try(Connection connection = Main.getPlugin().getHikari().getConnection();
+            PreparedStatement stmt = connection.prepareStatement("SELECT active FROM challenge WHERE name=?")) {
+
+            stmt.setString(1, challenge.getName());
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return Optional.of(rs.getBoolean("active"));
+            }
+            return Optional.empty();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    //enable a challenge
+    public boolean enableChallenge(Challenge challenge) {
+        try (Connection connection = Main.getPlugin().getHikari().getConnection();
+            PreparedStatement stmt = connection.prepareStatement("UPDATE challenge SET active=true WHERE name=?")) {
+
+            stmt.setString(1, challenge.getName());
+            stmt.execute();
+
+            Bukkit.broadcast(
+                    Component.text(challenge.getName())
+                        .append(Component.text(" wurde aktiviert!"))
+            );
+
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+
+    //disable a challenge
+    public boolean disableChallenge(Challenge challenge) {
+        try (Connection connection = Main.getPlugin().getHikari().getConnection();
+             PreparedStatement stmt = connection.prepareStatement("UPDATE challenge SET active=false WHERE name=?")) {
+
+            stmt.setString(1, challenge.getName());
+            stmt.execute();
+
+            Bukkit.broadcast(
+                    Component.text(challenge.getName())
+                            .append(Component.text(" wurde deaktiviert!"))
+            );
+
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+
+    //toggle a challenge.
+    //if the challenge is enabled, it will be disabled and vice versa.
+    //returns the new state of the challenge.
+    //returns null, if the challenge isn't found in the database.
+    public @NotNull Optional<Boolean> toggleChallenge(Challenge challenge) {
+        Optional<Boolean> isEnabled = isChallengeEnabled(challenge);
+        if (isEnabled.isEmpty()) {
+            return Optional.empty();
+        }
+        if (isEnabled.get()) {
+            disableChallenge(challenge);
+            return Optional.of(false);
+        } else {
+            enableChallenge(challenge);
+            return Optional.of(true);
+        }
+    }
 }

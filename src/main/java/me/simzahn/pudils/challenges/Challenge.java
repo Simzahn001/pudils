@@ -1,5 +1,7 @@
 package me.simzahn.pudils.challenges;
 
+import org.bukkit.inventory.ItemStack;
+
 public interface Challenge {
 
     /*
@@ -15,8 +17,8 @@ public interface Challenge {
     //if the name is changed, a new record will be added to the database with the "new" challenge
     public String getName();
 
-    //this is the name used for displaying in Minecraft (with color-codes)
-    public String getDisplayName();
+    //this is the item used for displaying in Minecraft (with color-codes)
+    public ItemStack getItem();
 
 
 

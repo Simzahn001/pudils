@@ -1,14 +1,16 @@
 package me.simzahn.pudils;
 
 import com.zaxxer.hikari.HikariDataSource;
+import me.simzahn.pudils.challenges.ChallengeCom;
 import me.simzahn.pudils.challenges.ChallengeManager;
+import me.simzahn.pudils.challenges.TestChallenge;
 import me.simzahn.pudils.commands.DifficultyCom;
 import me.simzahn.pudils.commands.ResetCom;
 import me.simzahn.pudils.commands.TeamCom;
 import me.simzahn.pudils.db.Updater;
 import me.simzahn.pudils.death.DamageListener;
 import me.simzahn.pudils.listeners.EntityRegenerateListener;
-import me.simzahn.pudils.listeners.InventoryClickListener;
+import me.simzahn.pudils.inventory.InventoryClickListener;
 import me.simzahn.pudils.listeners.JoinListener;
 import me.simzahn.pudils.listeners.LeaveListener;
 import me.simzahn.pudils.timer.Timer;
@@ -31,7 +33,7 @@ public final class Main extends JavaPlugin {
     private static Timer timer;
     private static Main plugin;
     private HikariDataSource hikari;
-    private ChallengeManager challengeManager;
+    private static ChallengeManager challengeManager;
     private PluginManager pluginManager;
 
     @Override
@@ -82,6 +84,9 @@ public final class Main extends JavaPlugin {
         getCommand("difficulty").setExecutor(new DifficultyCom());
         getCommand("difficulty").setTabCompleter(new DifficultyCom());
 
+        getCommand("challenge").setExecutor(new ChallengeCom());
+        getCommand("challenge").setTabCompleter(new ChallengeCom());
+
         getCommand("team").setExecutor(new TeamCom());
         getCommand("team").setTabCompleter(new TeamCom());
 
@@ -90,10 +95,12 @@ public final class Main extends JavaPlugin {
         //register listeners
         pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new EntityRegenerateListener(), this);
-        pluginManager.registerEvents(new InventoryClickListener(), this);
+        /** REDO DIFFICULTLY INVENTORY **/
+        pluginManager.registerEvents(new me.simzahn.pudils.listeners.InventoryClickListener(), this);
         pluginManager.registerEvents(new JoinListener(), this);
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new LeaveListener(), this);
+        pluginManager.registerEvents(new InventoryClickListener(), this);
         pluginManager.registerEvents(new ResetCom(), this);
 
         //initialize config for difficulty
@@ -151,7 +158,7 @@ public final class Main extends JavaPlugin {
         return pluginManager;
     }
 
-    public ChallengeManager getChallengeManager() {
+    public static ChallengeManager getChallengeManager() {
         return challengeManager;
     }
 }
