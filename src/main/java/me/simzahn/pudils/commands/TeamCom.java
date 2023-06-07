@@ -124,7 +124,16 @@ public class TeamCom implements CommandExecutor, TabCompleter {
                                 }
 
                                 //get the victims Data
-                                playerSelect.setString(1, sender.getUniqueId().toString());
+                                Player victim = Bukkit.getPlayer(args[1]);
+                                if (victim == null) {
+                                    sender.sendMessage(
+                                            Component.text("Der Spieler " + args[1] + " ist nicht online!")
+                                                    .color(TextColor.color(255, 0, 0))
+                                    );
+                                    return;
+                                }
+
+                                playerSelect.setString(1, victim.getUniqueId().toString());
                                 ResultSet victimResult = playerSelect.executeQuery();
 
                                 //check if the victim exists in the database
