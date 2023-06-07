@@ -5,14 +5,26 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class Timer {
 
     private int seconds;
     private boolean isRunning = false;
     private BukkitTask runnable;
+    //a list of all active players
+    //the list is reloaded every time the timer resumes
+    private List<Player> activePlayers = new ArrayList<>();
 
 
     public Timer() {
@@ -70,7 +82,6 @@ public class Timer {
             return false;
         }
         isRunning = true;
-        Main.getPlugin().getChallengeManager().toggleChallenges(true);
         this.runnable = new BukkitRunnable() {
             @Override
             public void run() {
@@ -92,6 +103,31 @@ public class Timer {
                 seconds++;
             }
         }.runTaskTimer(Main.getPlugin(), 20, 20);
+
+        //reload list of active Players
+
+            try (Connection connection = Main.getPlugin().getHikari().getConnection();
+                 PreparedStatement stmt = connection.prepareStatement("SELECT uuid FROM player WHERE playing=?")) {
+
+                stmt.setBoolean(1, true);
+                ResultSet rs = stmt.executeQuery();
+
+                while (rs.next()) {
+                    System.out.println(rs.getString("uuid"));
+                    Player player = Bukkit.getPlayer(UUID.fromString(rs.getString("uuid")));
+                    if (player != null) {
+                        activePlayers.add(player);
+                    }
+                }
+                System.out.println("Active Players: " + activePlayers.size());
+
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+        Main.getChallengeManager().toggleChallenges(true);
+
         return true;
     }
     public boolean resume(boolean messagePlayers) {
@@ -135,7 +171,7 @@ public class Timer {
             return false;
         }
 
-        Main.getPlugin().getChallengeManager().toggleChallenges(false);
+        Main.getChallengeManager().toggleChallenges(false);
 
         Bukkit.getOnlinePlayers().forEach(p ->
             p.sendActionBar(
@@ -239,5 +275,17 @@ public class Timer {
 
     public boolean isRunning() {
         return isRunning;
+    }
+
+
+
+
+
+
+
+    //returns a list of all active Players, which is being reloaded every time the timer resumes
+
+    public List<Player> getActivePlayers() {
+        return activePlayers;
     }
 }

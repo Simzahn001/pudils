@@ -1,7 +1,7 @@
 package me.simzahn.pudils.inventory;
 
 import me.simzahn.pudils.Main;
-import me.simzahn.pudils.challenges.Challenge;
+import me.simzahn.pudils.challenge.Challenge;
 import me.simzahn.pudils.util.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -122,8 +122,6 @@ public class ChallengeInventory implements InventoryHolder {
 
         PersistentDataContainer pdc = currentItem.getItemMeta().getPersistentDataContainer();
 
-        System.out.println("PDC: " + pdc.has(challengeKey, PersistentDataType.STRING));
-        
         //check if the clicked item is a navigation item
         if (pdc.has(navigationKey, PersistentDataType.STRING)) {
 
@@ -149,25 +147,18 @@ public class ChallengeInventory implements InventoryHolder {
         //check if the clicked item is a challenge item
         } else if (pdc.has(challengeKey, PersistentDataType.STRING)) {
 
-            System.out.println("Challenge item clicked");
-
             if (event.getClick() == ClickType.LEFT) {
-
-                System.out.println("Left click");
 
                 //retrieve the challenge
                 String value = pdc.get(challengeKey, PersistentDataType.STRING);
                 if (value == null) {
-                    System.out.println("Value is null");
                     return;
                 }
                 Challenge challenge = Main.getChallengeManager().getChallenge(value);
                 if (challenge == null) {
-                    System.out.println("Challenge is null");
                     return;
                 }
 
-                System.out.println("Challenge: " + challenge.getName());
                 //toggle the challenge
                 boolean isEnabled =  Main.getChallengeManager().toggleChallenge(challenge).orElse(false);
                 if (isEnabled) {
