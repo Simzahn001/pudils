@@ -1,8 +1,8 @@
 package me.simzahn.pudils.commands;
 
 import me.simzahn.pudils.Main;
+import me.simzahn.pudils.inventory.DifficultyInventory;
 import me.simzahn.pudils.util.Difficulty;
-import me.simzahn.pudils.util.Inventories;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -28,7 +28,7 @@ public class DifficultyCom implements CommandExecutor, TabCompleter {
             if (args.length==1) {
                 Main.setDifficulty(Difficulty.valueOf(args[0]));
             }else if (args.length==0) {
-                Inventories.openDifficultyInventory(player);
+                player.openInventory(new DifficultyInventory(Main.getPlugin()).getInventory());
             }else {
                 //@TODO remove this line vvv
                 player.sendMessage("§4§fBitte benutze §1/difficulty <difficulty>§4§f!");

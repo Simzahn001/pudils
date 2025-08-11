@@ -95,8 +95,6 @@ public final class Main extends JavaPlugin {
         //register listeners
         pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new EntityRegenerateListener(), this);
-        /** REDO DIFFICULTLY INVENTORY **/
-        pluginManager.registerEvents(new me.simzahn.pudils.listeners.InventoryClickListener(), this);
         pluginManager.registerEvents(new JoinListener(), this);
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new LeaveListener(), this);

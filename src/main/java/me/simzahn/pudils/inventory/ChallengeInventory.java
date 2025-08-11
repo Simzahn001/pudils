@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static java.lang.Math.floor;
 
-public class ChallengeInventory implements InventoryHolder {
+public class ChallengeInventory implements InventoryGUI {
 
     private final Inventory inventory;
 
@@ -104,10 +104,9 @@ public class ChallengeInventory implements InventoryHolder {
 
 
 
-    //handle the click event
+    @Override
     public void handleClick(InventoryClickEvent event) {
 
-        //cancel the event
         event.setCancelled(true);
 
         ItemStack currentItem = event.getCurrentItem();
