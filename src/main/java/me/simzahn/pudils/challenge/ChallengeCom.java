@@ -1,4 +1,4 @@
-package me.simzahn.pudils.challenges;
+package me.simzahn.pudils.challenge;
 
 import me.simzahn.pudils.Main;
 import me.simzahn.pudils.inventory.ChallengeInventory;

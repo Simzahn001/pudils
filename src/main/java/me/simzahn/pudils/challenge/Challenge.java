@@ -1,4 +1,4 @@
-package me.simzahn.pudils.challenges;
+package me.simzahn.pudils.challenge;
 
 import org.bukkit.inventory.ItemStack;
 
@@ -9,8 +9,11 @@ public interface Challenge {
      *  - Listener-triggered challenges
      *  - Scheduler-triggered challenges
      *
-     * Implement one of these to create a new Challenge.
+     * Implement one of these three to create a new Challenge.
      * Do not forget to register your challenge!
+     *
+     * To get all Players, which are playing, use Timer#getPlayers();
+     * The list is reloaded every time the timer is started.
      */
 
     //this is the name for the database
@@ -19,6 +22,12 @@ public interface Challenge {
 
     //this is the item used for displaying in Minecraft (with color-codes)
     public ItemStack getItem();
+
+    //this is a method, which is called when the timer ist started
+    default public void onStart() { }
+
+    //this is a method, which is called when the timer ist stopped
+    default public void onStop() { }
 
 
 

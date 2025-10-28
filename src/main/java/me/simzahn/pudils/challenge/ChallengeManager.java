@@ -1,4 +1,4 @@
-package me.simzahn.pudils.challenges;
+package me.simzahn.pudils.challenge;
 
 import me.simzahn.pudils.Main;
 import net.kyori.adventure.text.Component;
@@ -52,7 +52,6 @@ public class ChallengeManager {
                 stmtInsert.setString(2, "none");
                 stmtInsert.setBoolean(3, false);
                 stmtInsert.execute();
-                System.out.println();
             }
 
         } catch (SQLException e) {
@@ -88,7 +87,6 @@ public class ChallengeManager {
         //get all active challenges from the db
         try(Connection connection = Main.getPlugin().getHikari().getConnection();
             PreparedStatement stmt = connection.prepareStatement("SELECT name FROM challenge WHERE active=?")) {
-
             stmt.setBoolean(1, true);
             ResultSet rs = stmt.executeQuery();
 
@@ -105,6 +103,8 @@ public class ChallengeManager {
                                 .color(TextColor.color(255, 0, 0)).decorate(TextDecoration.BOLD));
                         continue;
                     }
+
+                    challenge.onStart();
 
 
                     if (challenge instanceof ListenerChallenge) {
@@ -141,6 +141,8 @@ public class ChallengeManager {
                                 .color(TextColor.color(255, 0, 0)).decorate(TextDecoration.BOLD));
                         continue;
                     }
+
+                    challenge.onStop();
 
                     if (challenge instanceof ListenerChallenge) {
                         ListenerChallenge listenerChallenge = (ListenerChallenge) challenge;
