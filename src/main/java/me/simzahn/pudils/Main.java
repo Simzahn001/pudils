@@ -3,6 +3,7 @@ package me.simzahn.pudils;
 import com.zaxxer.hikari.HikariDataSource;
 import me.simzahn.pudils.challenge.ChallengeCom;
 import me.simzahn.pudils.challenge.ChallengeManager;
+import me.simzahn.pudils.challenge.challenges.BlocksToRandomMobsChallenge;
 import me.simzahn.pudils.challenge.challenges.SpeedChallenge;
 import me.simzahn.pudils.commands.DifficultyCom;
 import me.simzahn.pudils.commands.ResetCom;
@@ -77,6 +78,7 @@ public final class Main extends JavaPlugin {
         //register challenges
         challengeManager = new ChallengeManager();
         challengeManager.registerChallenge(new SpeedChallenge());
+        challengeManager.registerChallenge(new BlocksToRandomMobsChallenge());
 
         //register commands
         getCommand("timer").setExecutor(new TimerCom());
