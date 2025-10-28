@@ -3,7 +3,7 @@
 # It is not possible to reset the worlds while the server is running, because the main world can never be unloaded.
 
 # Create Output File
-OUTPUT=worldReset.log
+OUTPUT="worldReset.log"
 
 # Wait until the Server has shut down properly
 echo "Waiting until the server has shut down properly" > $OUTPUT
@@ -60,4 +60,4 @@ sed -i -e "s/\(level-seed*= *\).*/\1${VALUE}/" $CONFIG_FILE
 echo "Starting Server" >> $OUTPUT
 NAME="challenge"
 echo "Starting screen called ${NAME} in detached mode..." >> $OUTPUT
-screen -d -m -L -S ${NAME} bash -c "java -Xmx4000M -jar paper-1.19.3.jar"
+screen -d -m -L -S ${NAME} bash -c "java -Xmx10000M -jar paper-1.21.8.jar"
