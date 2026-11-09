@@ -190,7 +190,7 @@ public class ChallengeInventory implements InventoryHolder {
 
         ItemMeta itemMeta = item.getItemMeta();
 
-        itemMeta.addEnchant(Enchantment.WATER_WORKER, 1, true);
+        itemMeta.addEnchant(Enchantment.AQUA_AFFINITY, 1, true);
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
         item.setItemMeta(itemMeta);
@@ -201,7 +201,7 @@ public class ChallengeInventory implements InventoryHolder {
 
         ItemMeta itemMeta = item.getItemMeta();
 
-        itemMeta.removeEnchant(Enchantment.WATER_WORKER);
+        itemMeta.removeEnchant(Enchantment.AQUA_AFFINITY);
         itemMeta.removeItemFlags(ItemFlag.HIDE_ENCHANTS);
 
         item.setItemMeta(itemMeta);
